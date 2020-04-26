@@ -365,6 +365,14 @@ rm -rf $RPM_BUILD_ROOT
 # R: ffmpeg-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/ffmpeg/libspa-ffmpeg.so
 
+%if %{with jack}
+%files spa-module-jack
+%defattr(644,root,root,755)
+%dir %{_libdir}/spa-0.2/jack
+# R: jack-audio-connection-kit-libs
+%attr(755,root,root) %{_libdir}/spa-0.2/jack/libspa-jack.so
+%endif
+
 %files spa-module-vulkan
 %defattr(644,root,root,755)
 %dir %{_libdir}/spa-0.2/vulkan
