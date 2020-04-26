@@ -374,7 +374,6 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with jack}
 %files jack
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/video-dsp-play
 %attr(755,root,root) %{_libdir}/libjack-pw.so.*.*.*
 %attr(755,root,root) %{_libdir}/libjack-pw.so
 %endif
