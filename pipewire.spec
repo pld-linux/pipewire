@@ -10,13 +10,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.2
+Version:	0.3.4
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	b39c50a59b779982cb888ca36d769d2d
+# Source0-md5:	14d7b609733991dd2a149e77dfd3eb25
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -382,20 +382,22 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with jack}
 %files jack
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libjack-pw.so.*.*.*
-%attr(755,root,root) %{_libdir}/libjack-pw.so
+%attr(755,root,root) %{_bindir}/pw-jack
+%dir %attr(755,root,root) %{_libdir}/pipewire-0.3/jack
+%attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
+%attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
+%attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %endif
 
 %if %{with pulseaudio}
 %files pulseaudio
 %defattr(644,root,root,755)
 %doc pipewire-pulseaudio/README.md
-%attr(755,root,root) %{_libdir}/libpulse-mainloop-glib-pw.so.*.*.*
-%attr(755,root,root) %{_libdir}/libpulse-mainloop-glib-pw.so
-%attr(755,root,root) %{_libdir}/libpulse-pw.so.*.*.*
-%attr(755,root,root) %{_libdir}/libpulse-pw.so
-%attr(755,root,root) %{_libdir}/libpulse-simple-pw.so.*.*.*
-%attr(755,root,root) %{_libdir}/libpulse-simple-pw.so
+%attr(755,root,root) %{_bindir}/pw-pulse
+%dir %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse
+%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-mainloop-glib.so*
+%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse.so*
+%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-simple.so*
 %endif
 
 %files -n alsa-plugin-pipewire
