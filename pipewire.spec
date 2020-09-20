@@ -1,4 +1,4 @@
-# TODO: evl support (https://evlproject.org/)
+# TODO: evl support (BR: libevl-devel, https://evlproject.org/)
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -10,20 +10,20 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.4
+Version:	0.3.12
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	14d7b609733991dd2a149e77dfd3eb25
+# Source0-md5:	66f8577f1f9acaf012858c23c05d9322
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
 %endif
 BuildRequires:	Vulkan-Loader-devel
-BuildRequires:	alsa-lib-devel >= 1
+BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
 %{?with_apidocs:BuildRequires:	doxygen}
@@ -35,8 +35,8 @@ BuildRequires:	glib2-devel >= 1:2.32.0
 %endif
 %{?with_apidocs:BuildRequires:	graphviz}
 %if %{with gstreamer}
-BuildRequires:	gstreamer-devel >= 1.0
-BuildRequires:	gstreamer-plugins-base-devel >= 1.0
+BuildRequires:	gstreamer-devel >= 1.10
+BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.10}
 BuildRequires:	libsndfile-devel >= 1.0.20
@@ -50,6 +50,7 @@ BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	xmltoman
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	libsndfile >= 1.0.20
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -116,6 +117,7 @@ Summary:	PipeWire SPA plugin to play and record audio with ALSA API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API ALSA
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	alsa-lib >= 1.1.7
 
 %description spa-module-alsa
 PipeWire SPA plugin to play and record audio with ALSA API.
@@ -194,6 +196,7 @@ Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	glib2 >= 1:2.32.0
 Requires:	pulseaudio >= 11.1
 
 %description pulseaudio
@@ -207,7 +210,7 @@ Summary:	PipeWire integration plugin for ALSA sound system
 Summary(pl.UTF-8):	Wtyczka systemu dźwięku ALSA integrująca z PipeWire
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	alsa-lib >= 1
+Requires:	alsa-lib >= 1.1.7
 
 %description -n alsa-plugin-pipewire
 PipeWire integration plugin for ALSA sound system.
@@ -220,8 +223,9 @@ Summary:	PipeWire video sink and source plugin for GStreamer
 Summary(pl.UTF-8):	Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gstreamer >= 1.0
-Requires:	gstreamer-plugins-base >= 1.0
+Requires:	glib2 >= 1:2.32.0
+Requires:	gstreamer >= 1.10
+Requires:	gstreamer-plugins-base >= 1.10
 
 %description -n gstreamer-pipewire
 PipeWire video sink and source plugin for GStreamer.
@@ -273,6 +277,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-dot
+%attr(755,root,root) %{_bindir}/pw-metadata
+%attr(755,root,root) %{_bindir}/pw-mididump
+%attr(755,root,root) %{_bindir}/pw-midiplay
+%attr(755,root,root) %{_bindir}/pw-midirecord
 %attr(755,root,root) %{_bindir}/pw-mon
 %attr(755,root,root) %{_bindir}/pw-play
 %attr(755,root,root) %{_bindir}/pw-record
@@ -289,6 +297,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
 # R: systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-native.so
@@ -321,8 +330,14 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/volume
 %attr(755,root,root) %{_libdir}/spa-0.2/volume/libspa-volume.so
 %{_mandir}/man1/pipewire.1*
+%{_mandir}/man1/pw-cat.1*
 %{_mandir}/man1/pw-cli.1*
+%{_mandir}/man1/pw-dot.1*
+%{_mandir}/man1/pw-metadata.1*
+%{_mandir}/man1/pw-mididump.1*
 %{_mandir}/man1/pw-mon.1*
+%{_mandir}/man1/pw-profiler.1*
+%{_mandir}/man1/pw-pulse.1*
 %{_mandir}/man5/pipewire.conf.5*
 
 %files libs
@@ -352,6 +367,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/alsa
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
+%{_datadir}/alsa-card-profile
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
@@ -402,9 +418,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n alsa-plugin-pipewire
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/alsa-lib/libasound_module_ctl_pipewire.so
 %attr(755,root,root) %{_libdir}/alsa-lib/libasound_module_pcm_pipewire.so
 %{_datadir}/alsa/alsa.conf.d/50-pipewire.conf
 %{_datadir}/alsa/alsa.conf.d/99-pipewire-default.conf
+/lib/udev/rules.d/90-pipewire-alsa.rules
 
 %if %{with gstreamer}
 %files -n gstreamer-pipewire
