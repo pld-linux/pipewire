@@ -1,4 +1,5 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
+# - libcamera integration (no releases yet; ARM specific?)
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -10,19 +11,19 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.12
+Version:	0.3.17
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	66f8577f1f9acaf012858c23c05d9322
+# Source0-md5:	cf551f35c83a1fa77fd31983ade00082
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
 %endif
-BuildRequires:	Vulkan-Loader-devel
+BuildRequires:	Vulkan-Loader-devel >= 1.1.69
 BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
@@ -44,7 +45,7 @@ BuildRequires:	meson >= 0.50.0
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 %{?with_pulseaudio:BuildRequires:	pulseaudio-devel >= 11.1}
-BuildRequires:	rpmbuild(macros) >= 1.736
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
@@ -102,9 +103,7 @@ Pliki nagłówkowe biblioteki PipeWire oraz Simple Plugin API.
 Summary:	API documentation for PipeWire library
 Summary(pl.UTF-8):	Dokumentacja API biblioteki PipeWire
 Group:		Documentation
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description apidocs
 API documentation for PipeWire library.
@@ -171,6 +170,7 @@ Summary:	PipeWire SPA plugin to generate video frames using Vulkan
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	Vulkan-Loader >= 1.1.69
 
 %description spa-module-vulkan
 PipeWire SPA plugin to generate video frames using Vulkan.
@@ -240,13 +240,14 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %build
 %meson build \
 	-Daudiotestsrc=true \
+	-Dbluez5-backend-hsphfpd=true \
 	%{?with_apidocs:-Ddocs=true} \
 	%{?with_ffmpeg:-Dffmpeg=true} \
 	%{!?with_gstreamer:-Dgstreamer=false} \
 	%{!?with_jack:-Djack=false} \
 	-Dman=true \
 	%{!?with_jack:-Dpipewire-jack=false} \
-	%{!?with_pulseaudio:-Dpipewire-pulseaudio=false} \
+	%{?with_pulseaudio:-Dpipewire-pulseaudio=true} \
 	-Dvideotestsrc=true \
 	-Dvolume=true
 # TODO: -Devl=true
@@ -283,12 +284,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-midirecord
 %attr(755,root,root) %{_bindir}/pw-mon
 %attr(755,root,root) %{_bindir}/pw-play
-%attr(755,root,root) %{_bindir}/pw-record
 %attr(755,root,root) %{_bindir}/pw-profiler
+%attr(755,root,root) %{_bindir}/pw-record
+%attr(755,root,root) %{_bindir}/pw-reserve
 %attr(755,root,root) %{_bindir}/spa-inspect
 %attr(755,root,root) %{_bindir}/spa-monitor
+# R: libsndfile
+%attr(755,root,root) %{_bindir}/spa-resample
 %dir %{_sysconfdir}/pipewire
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/pipewire.conf
+%dir %{_sysconfdir}/pipewire/media-session.d
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-access.so
@@ -301,6 +306,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
 # R: systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-native.so
+# R: dbus-libs systemd-libs
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
@@ -319,6 +326,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/support
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-dbus.so
+# R: systemd-libs
+%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
 %dir %{_libdir}/spa-0.2/v4l2
 # R: udev-libs
@@ -337,7 +346,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pw-mididump.1*
 %{_mandir}/man1/pw-mon.1*
 %{_mandir}/man1/pw-profiler.1*
-%{_mandir}/man1/pw-pulse.1*
 %{_mandir}/man5/pipewire.conf.5*
 
 %files libs
@@ -364,6 +372,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files spa-module-alsa
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/spa-acp-tool
 %dir %{_libdir}/spa-0.2/alsa
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
@@ -399,6 +408,7 @@ rm -rf $RPM_BUILD_ROOT
 %files jack
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pw-jack
+%{_sysconfdir}/pipewire/media-session.d/with-jack
 %dir %attr(755,root,root) %{_libdir}/pipewire-0.3/jack
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
@@ -409,11 +419,16 @@ rm -rf $RPM_BUILD_ROOT
 %files pulseaudio
 %defattr(644,root,root,755)
 %doc pipewire-pulseaudio/README.md
+%attr(755,root,root) %{_bindir}/pipewire-pulse
 %attr(755,root,root) %{_bindir}/pw-pulse
+%{_sysconfdir}/pipewire/media-session.d/with-pulseaudio
 %dir %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse
 %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-mainloop-glib.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-simple.so*
+%{systemduserunitdir}/pipewire-pulse.service
+%{systemduserunitdir}/pipewire-pulse.socket
+%{_mandir}/man1/pw-pulse.1*
 %endif
 
 %files -n alsa-plugin-pipewire
