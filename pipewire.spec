@@ -103,7 +103,7 @@ Pliki nagłówkowe biblioteki PipeWire oraz Simple Plugin API.
 Summary:	API documentation for PipeWire library
 Summary(pl.UTF-8):	Dokumentacja API biblioteki PipeWire
 Group:		Documentation
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description apidocs
 API documentation for PipeWire library.
