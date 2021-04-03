@@ -429,6 +429,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
+%{_mandir}/man1/pw-jack.1*
 %endif
 
 %files pulseaudio
