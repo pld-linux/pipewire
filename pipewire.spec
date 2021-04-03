@@ -1,23 +1,23 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
 # - libcamera integration (no releases yet; ARM specific?)
+# - ldacBT-enc, ldacBT-abr, libopenaptx for bluez5 codecs
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
-%bcond_without	pulseaudio	# pipewire-pulseaudio integration
 #
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.17
+Version:	0.3.24
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	cf551f35c83a1fa77fd31983ade00082
+# Source0-md5:	887be3193a91f18c7ea63e3f5c61976b
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -28,10 +28,11 @@ BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
 %{?with_apidocs:BuildRequires:	doxygen}
+BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	gcc >= 5:3.2
-%if %{with gstreamer} || %{with pulseaudio}
+%if %{with gstreamer}
 BuildRequires:	glib2-devel >= 1:2.32.0
 %endif
 %{?with_apidocs:BuildRequires:	graphviz}
@@ -40,11 +41,15 @@ BuildRequires:	gstreamer-devel >= 1.10
 BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.10}
+%ifarch i386 i486
+# possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
+BuildRequires:	libatomic-devel
+%endif
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	meson >= 0.50.0
+BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
-%{?with_pulseaudio:BuildRequires:	pulseaudio-devel >= 11.1}
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
@@ -196,8 +201,6 @@ Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	glib2 >= 1:2.32.0
-Requires:	pulseaudio >= 11.1
 
 %description pulseaudio
 PipeWire PulseAudio sound system integration.
@@ -239,18 +242,17 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 
 %build
 %meson build \
-	-Daudiotestsrc=true \
-	-Dbluez5-backend-hsphfpd=true \
-	%{?with_apidocs:-Ddocs=true} \
-	%{?with_ffmpeg:-Dffmpeg=true} \
-	%{!?with_gstreamer:-Dgstreamer=false} \
-	%{!?with_jack:-Djack=false} \
-	-Dman=true \
-	%{!?with_jack:-Dpipewire-jack=false} \
-	%{?with_pulseaudio:-Dpipewire-pulseaudio=true} \
-	-Dvideotestsrc=true \
-	-Dvolume=true
-# TODO: -Devl=true
+	-Daudiotestsrc=enabled \
+	-Dbluez5-backend-hsphfpd=enabled \
+	%{?with_apidocs:-Ddocs=enabled} \
+	%{?with_ffmpeg:-Dffmpeg=enabled} \
+	%{!?with_gstreamer:-Dgstreamer=disabled} \
+	%{!?with_jack:-Djack=disabled} \
+	-Dman=enabled \
+	%{!?with_jack:-Dpipewire-jack=disabled} \
+	-Dvideotestsrc=enabled \
+	-Dvolume=enabled
+# TODO: -Devl=enabled
 
 %ninja_build -C build
 
@@ -265,19 +267,22 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 # packaged as %doc in -apidocs
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html
 
+%find_lang %{name}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%files
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pipewire
 %attr(755,root,root) %{_bindir}/pipewire-media-session
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-dot
+%attr(755,root,root) %{_bindir}/pw-dump
 %attr(755,root,root) %{_bindir}/pw-metadata
 %attr(755,root,root) %{_bindir}/pw-mididump
 %attr(755,root,root) %{_bindir}/pw-midiplay
@@ -287,15 +292,22 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-profiler
 %attr(755,root,root) %{_bindir}/pw-record
 %attr(755,root,root) %{_bindir}/pw-reserve
+%attr(755,root,root) %{_bindir}/pw-top
 %attr(755,root,root) %{_bindir}/spa-inspect
+%attr(755,root,root) %{_bindir}/spa-json-dump
 %attr(755,root,root) %{_bindir}/spa-monitor
 # R: libsndfile
 %attr(755,root,root) %{_bindir}/spa-resample
 %dir %{_sysconfdir}/pipewire
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/client.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/client-rt.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/pipewire.conf
 %dir %{_sysconfdir}/pipewire/media-session.d
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/media-session.d/media-session.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/media-session.d/v4l2-monitor.conf
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
+%{systemduserunitdir}/pipewire-media-session.service
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-access.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
@@ -373,6 +385,7 @@ rm -rf $RPM_BUILD_ROOT
 %files spa-module-alsa
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/spa-acp-tool
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/media-session.d/alsa-monitor.conf
 %dir %{_libdir}/spa-0.2/alsa
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
@@ -380,6 +393,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/media-session.d/bluez-monitor.conf
 %dir %{_libdir}/spa-0.2/bluez5
 # R: dbus-libs sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-bluez5.so
@@ -408,6 +422,7 @@ rm -rf $RPM_BUILD_ROOT
 %files jack
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pw-jack
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/jack.conf
 %{_sysconfdir}/pipewire/media-session.d/with-jack
 %dir %attr(755,root,root) %{_libdir}/pipewire-0.3/jack
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
@@ -415,21 +430,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %endif
 
-%if %{with pulseaudio}
 %files pulseaudio
 %defattr(644,root,root,755)
-%doc pipewire-pulseaudio/README.md
 %attr(755,root,root) %{_bindir}/pipewire-pulse
-%attr(755,root,root) %{_bindir}/pw-pulse
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pipewire/pipewire-pulse.conf
 %{_sysconfdir}/pipewire/media-session.d/with-pulseaudio
-%dir %attr(755,root,root) %{_libdir}/pipewire-0.3/pulse
-%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-mainloop-glib.so*
-%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse.so*
-%attr(755,root,root) %{_libdir}/pipewire-0.3/pulse/libpulse-simple.so*
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
-%{_mandir}/man1/pw-pulse.1*
-%endif
 
 %files -n alsa-plugin-pipewire
 %defattr(644,root,root,755)
