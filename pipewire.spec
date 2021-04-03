@@ -1,6 +1,5 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
 # - libcamera integration (no releases yet; ARM specific?)
-# - ldacBT-enc, ldacBT-abr, libopenaptx for bluez5 codecs
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -41,10 +40,12 @@ BuildRequires:	gstreamer-devel >= 1.10
 BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.10}
+BuildRequires:	ldacBT-devel
 %ifarch i386 i486
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
 %endif
+BuildRequires:	libopenaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	meson >= 0.50.0
 BuildRequires:	ncurses-devel
