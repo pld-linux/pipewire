@@ -10,13 +10,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.24
+Version:	0.3.27
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	887be3193a91f18c7ea63e3f5c61976b
+# Source0-md5:	85949d26d49646b79dece9a0f49ed47d
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -284,6 +284,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-dot
 %attr(755,root,root) %{_bindir}/pw-dump
+%attr(755,root,root) %{_bindir}/pw-link
+%attr(755,root,root) %{_bindir}/pw-loopback
 %attr(755,root,root) %{_bindir}/pw-metadata
 %attr(755,root,root) %{_bindir}/pw-mididump
 %attr(755,root,root) %{_bindir}/pw-midiplay
@@ -313,7 +315,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-echo-cancel.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
@@ -321,6 +325,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-native.so
 # R: dbus-libs systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-simple.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
