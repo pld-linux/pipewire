@@ -266,7 +266,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 
 # packaged as %doc in -apidocs
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html
+%{?with_apidocs:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html}
 
 %find_lang %{name}
 
