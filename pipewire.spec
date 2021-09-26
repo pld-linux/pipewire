@@ -335,11 +335,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
+# R: webrtc-audio-processing >= 0.2
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-echo-cancel.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
+# R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
 # R: systemd-libs
@@ -355,6 +357,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node-factory.so
+# R: avahi-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-zeroconf-discover.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
@@ -424,12 +427,17 @@ rm -rf $RPM_BUILD_ROOT
 %files spa-module-bluez
 %defattr(644,root,root,755)
 %dir %{_libdir}/spa-0.2/bluez5
-# R: dbus-libs sbc
+# R: bluez-libs >= 4.101 dbus-libs libusb >= 1.0 sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-bluez5.so
+# R: fdk-aac
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-aac.so
+# R: libfreeaptx sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-aptx.so
+# R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
+# R: ldacBT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
+# R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-sbc.so
 %{_datadir}/pipewire/media-session.d/bluez-monitor.conf
 %dir %{_datadir}/spa-0.2/bluez5
@@ -471,6 +479,7 @@ rm -rf $RPM_BUILD_ROOT
 %files pulseaudio
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pipewire-pulse
+# R: pulseaudio-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pulse-tunnel.so
 %{_datadir}/pipewire/pipewire-pulse.conf
 %{_datadir}/pipewire/media-session.d/with-pulseaudio
