@@ -27,6 +27,7 @@ BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
+# rst2man
 BuildRequires:	docutils
 %{?with_apidocs:BuildRequires:	doxygen}
 BuildRequires:	fdk-aac-devel
@@ -41,16 +42,18 @@ BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gstreamer-devel >= 1.10
 BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
-%{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.10}
+%{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.17}
 BuildRequires:	ldacBT-devel
 %ifarch i386 i486
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
 %endif
 BuildRequires:	libcap-devel
+# for libcamera
+#BuildRequires:	libdrm-devel >= 2.4.98
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
-BuildRequires:	libusb-devel
+BuildRequires:	libusb-devel >= 1.0
 BuildRequires:	meson >= 0.54.0
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
@@ -61,6 +64,7 @@ BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
+BuildRequires:	webrtc-audio-processing-devel < 1.0
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -167,7 +171,7 @@ Summary:	PipeWire SPA plugin to play and record audio with JACK API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API JACK
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	jack-audio-connection-kit >= 1.9.10
+Requires:	jack-audio-connection-kit >= 1.9.17
 
 %description spa-module-jack
 PipeWire SPA plugin to play and record audio with JACK API.
@@ -194,7 +198,7 @@ Summary:	PipeWire JACK sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku JACK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	jack-audio-connection-kit >= 1.9.10
+Requires:	jack-audio-connection-kit >= 1.9.17
 
 %description jack
 PipeWire JACK sound system integration.
@@ -309,6 +313,7 @@ rm -rf $RPM_BUILD_ROOT
 # R: libsndfile
 %attr(755,root,root) %{_bindir}/spa-resample
 %dir %{_sysconfdir}/pipewire
+%dir %{_datadir}/pipewire
 %{_datadir}/pipewire/client.conf
 %{_datadir}/pipewire/client-rt.conf
 %{_datadir}/pipewire/pipewire.conf
@@ -404,21 +409,20 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
-%doc doc/design.txt build/doc/html/*
+%doc build/doc/html/*
 %endif
 
 %files spa-module-alsa
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/spa-acp-tool
-%{_datadir}/pipewire/media-session.d/alsa-monitor.conf
 %dir %{_libdir}/spa-0.2/alsa
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
 %{_datadir}/alsa-card-profile
+%{_datadir}/pipewire/media-session.d/alsa-monitor.conf
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
-%{_datadir}/pipewire/media-session.d/bluez-monitor.conf
 %dir %{_libdir}/spa-0.2/bluez5
 # R: dbus-libs sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-bluez5.so
@@ -427,6 +431,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-sbc.so
+%{_datadir}/pipewire/media-session.d/bluez-monitor.conf
 %dir %{_datadir}/spa-0.2/bluez5
 %{_datadir}/spa-0.2/bluez5/bluez-hardware.conf
 
@@ -454,12 +459,12 @@ rm -rf $RPM_BUILD_ROOT
 %files jack
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pw-jack
-%{_datadir}/pipewire/jack.conf
-%{_datadir}/pipewire/media-session.d/with-jack
 %dir %{_libdir}/pipewire-0.3/jack
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
+%{_datadir}/pipewire/jack.conf
+%{_datadir}/pipewire/media-session.d/with-jack
 %{_mandir}/man1/pw-jack.1*
 %endif
 
