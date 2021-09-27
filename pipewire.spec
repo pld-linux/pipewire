@@ -44,7 +44,7 @@ BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.17}
 BuildRequires:	ldacBT-devel
-%ifarch i386 i486
+%ifarch i386 i486 %{armv4} %{armv5} %{armv6}
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
 %endif
@@ -59,7 +59,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
-BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	rpmbuild(macros) >= 2.007
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
