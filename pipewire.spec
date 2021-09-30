@@ -70,6 +70,7 @@ BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
+Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
