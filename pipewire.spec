@@ -34,6 +34,7 @@ BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	gcc >= 5:3.2
+BuildRequires:	gettext-tools
 %if %{with gstreamer}
 BuildRequires:	glib2-devel >= 1:2.32.0
 %endif
