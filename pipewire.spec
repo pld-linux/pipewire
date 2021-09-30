@@ -10,14 +10,15 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.37
+Version:	0.3.38
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	d4c7ed5edab55b944d8e0570856aa60a
+# Source0-md5:	a66a2b856bede375c12091f5468d06c7
 Patch0:		%{name}-gcc.patch
+Patch1:		arm_build.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
@@ -60,6 +61,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
+BuildRequires:	readline-devel >= 8.1.1-2
 BuildRequires:	rpmbuild(macros) >= 2.007
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
@@ -250,6 +252,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %meson build \
