@@ -10,15 +10,14 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.38
+Version:	0.3.39
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	a66a2b856bede375c12091f5468d06c7
+# Source0-md5:	4e17bff7a128d068bf465a6edbb3a4ec
 Patch0:		%{name}-gcc.patch
-Patch1:		arm_build.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
@@ -70,6 +69,7 @@ BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
+Requires:	pipewire-session-manager
 Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -253,7 +253,6 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %meson build \
@@ -265,6 +264,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	%{!?with_jack:-Djack=disabled} \
 	-Dman=enabled \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
+	-Dsession-managers='[]' \
 	-Dvideotestsrc=enabled \
 	-Dvolume=enabled \
 	-Dvulkan=enabled
@@ -294,7 +294,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pipewire
-%attr(755,root,root) %{_bindir}/pipewire-media-session
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-dot
@@ -312,6 +311,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-record
 %attr(755,root,root) %{_bindir}/pw-reserve
 %attr(755,root,root) %{_bindir}/pw-top
+%attr(755,root,root) %{_bindir}/pw-v4l2
 %attr(755,root,root) %{_bindir}/spa-inspect
 %attr(755,root,root) %{_bindir}/spa-json-dump
 %attr(755,root,root) %{_bindir}/spa-monitor
@@ -330,12 +330,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-5.1-kemar.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-7.1-hesuvi.conf
 %{_datadir}/pipewire/filter-chain/source-rnnoise.conf
-%dir %{_datadir}/pipewire/media-session.d
-%{_datadir}/pipewire/media-session.d/media-session.conf
-%{_datadir}/pipewire/media-session.d/v4l2-monitor.conf
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
-%{systemduserunitdir}/pipewire-media-session.service
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-access.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
@@ -364,6 +360,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node-factory.so
 # R: avahi-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-zeroconf-discover.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/v4l2/libpw-v4l2.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
 %dir %{_libdir}/spa-0.2/audiomixer
@@ -403,6 +400,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libpipewire-0.3.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpipewire-0.3.so.0
 %dir %{_libdir}/pipewire-0.3
+%dir %{_libdir}/pipewire-0.3/v4l2
 %dir %{_libdir}/spa-0.2
 %dir %{_datadir}/spa-0.2
 
@@ -427,7 +425,6 @@ rm -rf $RPM_BUILD_ROOT
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
 %{_datadir}/alsa-card-profile
-%{_datadir}/pipewire/media-session.d/alsa-monitor.conf
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
@@ -444,7 +441,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
 # R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-sbc.so
-%{_datadir}/pipewire/media-session.d/bluez-monitor.conf
 %dir %{_datadir}/spa-0.2/bluez5
 %{_datadir}/spa-0.2/bluez5/bluez-hardware.conf
 
@@ -477,7 +473,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %{_datadir}/pipewire/jack.conf
-%{_datadir}/pipewire/media-session.d/with-jack
 %{_mandir}/man1/pw-jack.1*
 %endif
 
@@ -487,7 +482,6 @@ rm -rf $RPM_BUILD_ROOT
 # R: pulseaudio-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pulse-tunnel.so
 %{_datadir}/pipewire/pipewire-pulse.conf
-%{_datadir}/pipewire/media-session.d/with-pulseaudio
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
 
