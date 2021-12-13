@@ -6,17 +6,18 @@
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
+%bcond_without	lv2		# LV2 plugins support
 #
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.40
+Version:	0.3.41
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	eb8ec3e850af30e39d94b93525a23036
+# Source0-md5:	ba0afd0803434b834ebbe8e61e16c790
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -55,9 +56,11 @@ BuildRequires:	libcap-devel
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libusb-devel >= 1.0
+%{?with_lv2:BuildRequires:	lilv-devel}
 BuildRequires:	meson >= 0.54.0
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
+BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
@@ -262,6 +265,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
 	%{!?with_jack:-Djack=disabled} \
+	%{!?with_lv2:-Dlv2=disabled} \
 	-Dman=enabled \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
 	-Dsession-managers='[]' \
@@ -350,6 +354,8 @@ rm -rf $RPM_BUILD_ROOT
 # R: dbus-libs systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-simple.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-discover.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
