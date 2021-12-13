@@ -64,6 +64,7 @@ BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.007
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
