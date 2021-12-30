@@ -1,0 +1,33 @@
+From ee0fcf05c17db0e5d5775d94c8911af7821c868f Mon Sep 17 00:00:00 2001
+From: Wim Taymans <wtaymans@redhat.com>
+Date: Thu, 16 Dec 2021 11:39:46 +0100
+Subject: [PATCH] context: apply new quantum and rate when driver is idle
+
+When the driver is IDLE, apply the quantum and rate immediately
+so that we can use the values when starting the driver.
+
+See #1913
+---
+ src/pipewire/context.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/pipewire/context.c b/src/pipewire/context.c
+index 84eca3bda..a3551c2b8 100644
+--- a/src/pipewire/context.c
++++ b/src/pipewire/context.c
+@@ -1246,6 +1246,12 @@ again:
+ 			n->current_pending = true;
+ 		}
+ 
++		if (n->info.state < PW_NODE_STATE_RUNNING && n->current_pending) {
++			n->rt.position->clock.duration = n->current_quantum;
++			n->rt.position->clock.rate = n->current_rate;
++			n->current_pending = false;
++		}
++
+ 		pw_log_debug("%p: driving %p running:%d passive:%d quantum:%u '%s'",
+ 				context, n, running, n->passive, quantum, n->name);
+ 
+-- 
+GitLab
+

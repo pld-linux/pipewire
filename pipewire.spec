@@ -12,13 +12,14 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	0.3.42
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	4bf2cdfe19e65dea03906b86f3707db4
 Patch0:		%{name}-gcc.patch
+Patch1:		%{name}-samplerate.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
@@ -257,6 +258,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %meson build \
