@@ -11,15 +11,14 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.42
-Release:	2
+Version:	0.3.43
+Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	4bf2cdfe19e65dea03906b86f3707db4
+# Source0-md5:	6e12461b046e45c4c47bd7face365818
 Patch0:		%{name}-gcc.patch
-Patch1:		%{name}-samplerate.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
@@ -56,9 +55,10 @@ BuildRequires:	libcap-devel
 #BuildRequires:	libdrm-devel >= 2.4.98
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
+BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libusb-devel >= 1.0
 %{?with_lv2:BuildRequires:	lilv-devel}
-BuildRequires:	meson >= 0.54.0
+BuildRequires:	meson >= 0.56.0
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	openssl-devel
@@ -258,7 +258,6 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %meson build \
