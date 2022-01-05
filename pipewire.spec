@@ -12,7 +12,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	0.3.43
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
@@ -220,6 +220,7 @@ Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Suggests:	pulseaudio-tools
 
 %description pulseaudio
 PipeWire PulseAudio sound system integration.
