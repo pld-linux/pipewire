@@ -12,7 +12,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	0.3.43
-Release:	3
+Release:	4
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
@@ -297,18 +297,22 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 %systemd_user_post pipewire.service
+%systemd_user_post pipewire.socket
 
 %preun
 %systemd_user_preun pipewire.service
+%systemd_user_preun pipewire.socket
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
 %post pulseaudio
 %systemd_user_post pipewire-pulse.service
+%systemd_user_post pipewire-pulse.socket
 
 %preun pulseaudio
 %systemd_user_preun pipewire-pulse.service
+%systemd_user_preun pipewire-pulse.socket
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
