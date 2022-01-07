@@ -12,7 +12,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	0.3.43
-Release:	2
+Release:	3
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
@@ -66,7 +66,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 2.007
+BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
@@ -295,8 +295,20 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+%systemd_user_post pipewire.service
+
+%preun
+%systemd_user_preun pipewire.service
+
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
+
+%post pulseaudio
+%systemd_user_post pipewire-pulse.service
+
+%preun pulseaudio
+%systemd_user_preun pipewire-pulse.service
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
