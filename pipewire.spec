@@ -300,23 +300,19 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 rm -rf $RPM_BUILD_ROOT
 
 %post
-%systemd_user_post pipewire.service
-%systemd_user_post pipewire.socket
+%systemd_user_post pipewire.service pipewire.socket
 
 %preun
-%systemd_user_preun pipewire.service
-%systemd_user_preun pipewire.socket
+%systemd_user_preun pipewire.service pipewire.socket
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
 %post pulseaudio
-%systemd_user_post pipewire-pulse.service
-%systemd_user_post pipewire-pulse.socket
+%systemd_user_post pipewire-pulse.service pipewire-pulse.socket
 
 %preun pulseaudio
-%systemd_user_preun pipewire-pulse.service
-%systemd_user_preun pipewire-pulse.socket
+%systemd_user_preun pipewire-pulse.service pipewire-pulse.socket
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
