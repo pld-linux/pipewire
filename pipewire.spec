@@ -12,7 +12,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	0.3.43
-Release:	4
+Release:	5
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
@@ -72,9 +72,11 @@ BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
+Requires(post,preun,postun):	systemd-units >= 250.1
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
 Requires:	pipewire-session-manager
+Requires:	systemd-units >= 250.1
 Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -219,7 +221,9 @@ Integracja PipeWire z systemem dźwięku JACK.
 Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
 Group:		Libraries
+Requires(post,preun,postun):	systemd-units >= 250.1
 Requires:	%{name} = %{version}-%{release}
+Requires:	systemd-units >= 250.1
 Suggests:	pulseaudio-tools
 
 %description pulseaudio
