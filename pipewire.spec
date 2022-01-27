@@ -7,17 +7,18 @@
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
 %bcond_without	lv2		# LV2 plugins support
+%bcond_without	x11		# X11 bell support
 #
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.43
-Release:	5
+Version:	0.3.44
+Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	6e12461b046e45c4c47bd7face365818
+# Source0-md5:	c70eaa6bc38ffdffbc1d7a431bbd0db4
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -51,6 +52,7 @@ BuildRequires:	ldacBT-devel
 BuildRequires:	libatomic-devel
 %endif
 BuildRequires:	libcap-devel
+%{?with_x11:BuildRequires:	libcanberra-devel}
 # for libcamera
 #BuildRequires:	libdrm-devel >= 2.4.98
 BuildRequires:	libfreeaptx-devel
@@ -58,7 +60,7 @@ BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libusb-devel >= 1.0
 %{?with_lv2:BuildRequires:	lilv-devel}
-BuildRequires:	meson >= 0.56.0
+BuildRequires:	meson >= 0.59.0
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	openssl-devel
@@ -72,6 +74,7 @@ BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
+%{?with_x11:BuildRequires:	xorg-lib-libX11-devel}
 Requires(post,preun):	systemd-units >= 250.1
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
@@ -232,6 +235,18 @@ PipeWire PulseAudio sound system integration.
 %description pulseaudio -l pl.UTF-8
 Integracja PipeWire z systemem dźwięku PulseAudio.
 
+%package x11-bell
+Summary:	PipeWire module for X11 bell support
+Summary(pl.UTF-8):	Moduł PipeWire do obsługi dzwonka X11
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description x11-bell
+PipeWire module for X11 bell support.
+
+%description x11-bell -l pl.UTF-8
+Moduł PipeWire do obsługi dzwonka X11.
+
 %package -n alsa-plugin-pipewire
 Summary:	PipeWire integration plugin for ALSA sound system
 Summary(pl.UTF-8):	Wtyczka systemu dźwięku ALSA integrująca z PipeWire
@@ -278,7 +293,8 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	-Dsession-managers='[]' \
 	-Dvideotestsrc=enabled \
 	-Dvolume=enabled \
-	-Dvulkan=enabled
+	-Dvulkan=enabled \
+	-Dx11=%{__enabled_disabled x11}
 # TODO: -Devl=enabled
 
 %ninja_build -C build
@@ -344,6 +360,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/pipewire
 %{_datadir}/pipewire/client.conf
 %{_datadir}/pipewire/client-rt.conf
+%{_datadir}/pipewire/minimal.conf
 %{_datadir}/pipewire/pipewire.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
@@ -510,6 +527,12 @@ rm -rf $RPM_BUILD_ROOT
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
 %{_mandir}/man1/pipewire-pulse.1*
+
+%if %{with x11}
+%files x11-bell
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-x11-bell.so
+%endif
 
 %files -n alsa-plugin-pipewire
 %defattr(644,root,root,755)
