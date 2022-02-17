@@ -12,13 +12,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.45
+Version:	0.3.46
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	9407544413ea94c554ff3e80e225ab96
+# Source0-md5:	f3a1d8e1daf8ce4cd8a817dddf040229
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -379,6 +379,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
 # R: webrtc-audio-processing >= 0.2
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-echo-cancel.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-fallback-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
@@ -404,6 +405,9 @@ rm -rf $RPM_BUILD_ROOT
 # R: avahi-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-zeroconf-discover.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/v4l2/libpw-v4l2.so
+%dir %{_libdir}/spa-0.2/aec
+%attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-null.so
+%attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-webrtc.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
 %dir %{_libdir}/spa-0.2/audiomixer
