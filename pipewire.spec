@@ -12,15 +12,14 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.47
-Release:	2
+Version:	0.3.48
+Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	38f2662f638cca4472c0de7262b5445f
+# Source0-md5:	fdc7fd3629c87c64e2ebe581807f1a8a
 Patch0:		%{name}-gcc.patch
-Patch1:		use_after_free_crash.patch
 URL:		https://pipewire.org/
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
@@ -75,7 +74,10 @@ BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
-%{?with_x11:BuildRequires:	xorg-lib-libX11-devel}
+%if %{with x11}
+BuildRequires:	xorg-lib-libX11-devel
+BuildRequires:	xorg-lib-libXfixes-devel >= 6
+%endif
 Requires(post,preun):	systemd-units >= 250.1
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
@@ -241,6 +243,7 @@ Summary:	PipeWire module for X11 bell support
 Summary(pl.UTF-8):	Moduł PipeWire do obsługi dzwonka X11
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	xorg-lib-libXfixes >= 6
 
 %description x11-bell
 PipeWire module for X11 bell support.
@@ -279,7 +282,6 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %meson build \
