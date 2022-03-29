@@ -12,13 +12,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.48
+Version:	0.3.49
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	fdc7fd3629c87c64e2ebe581807f1a8a
+# Source0-md5:	44d98da2a909b02af71f50303f409e68
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -443,6 +443,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pw-mididump.1*
 %{_mandir}/man1/pw-mon.1*
 %{_mandir}/man1/pw-profiler.1*
+%{_mandir}/man1/pw-top.1*
 %{_mandir}/man5/pipewire.conf.5*
 
 %files libs
