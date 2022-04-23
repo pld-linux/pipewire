@@ -7,6 +7,7 @@
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
 %bcond_without	lv2		# LV2 plugins support
+%bcond_without	roc		# ROC modules
 %bcond_without	x11		# X11 bell support
 #
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
@@ -67,6 +68,7 @@ BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
+%{?with_roc:BuildRequires:	roc-toolkit-devel}
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
@@ -238,6 +240,18 @@ PipeWire PulseAudio sound system integration.
 %description pulseaudio -l pl.UTF-8
 Integracja PipeWire z systemem dźwięku PulseAudio.
 
+%package roc
+Summary:	PipeWire ROC streaming integration
+Summary(pl.UTF-8):	Integracja PipeWire ze strumieniami ROC
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description roc
+PipeWire ROC streaming integration.
+
+%description roc -l pl.UTF-8
+Integracja PipeWire ze strumieniami ROC.
+
 %package x11-bell
 Summary:	PipeWire module for X11 bell support
 Summary(pl.UTF-8):	Moduł PipeWire do obsługi dzwonka X11
@@ -294,6 +308,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	%{!?with_lv2:-Dlv2=disabled} \
 	-Dman=enabled \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
+	%{!?with_roc:-Droc=disabled} \
 	-Dsession-managers='[]' \
 	-Dvideotestsrc=enabled \
 	-Dvolume=enabled \
@@ -397,6 +412,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-simple.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-discover.so
+# R: openssl
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
 # R: dbus-libs
@@ -411,6 +427,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/v4l2/libpw-v4l2.so
 %dir %{_libdir}/spa-0.2/aec
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-null.so
+# R: webrtc-audio-processing >= 0.2
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-webrtc.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
@@ -539,9 +556,19 @@ rm -rf $RPM_BUILD_ROOT
 %{systemduserunitdir}/pipewire-pulse.socket
 %{_mandir}/man1/pipewire-pulse.1*
 
+%if %{with roc}
+%files roc
+%defattr(644,root,root,755)
+# R: roc-toolkit
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-sink.so
+# R: roc-toolkit
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-source.so
+%endif
+
 %if %{with x11}
 %files x11-bell
 %defattr(644,root,root,755)
+# R: libX11 libXfixes libcanberra
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-x11-bell.so
 %endif
 
