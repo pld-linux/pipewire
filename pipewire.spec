@@ -13,13 +13,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.51
+Version:	0.3.52
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	590e7e94908f330540012fb0afb961d8
+# Source0-md5:	489aa4ab3b404a4c489c5b2ebcaeae2c
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -403,6 +403,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pipe-tunnel.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
