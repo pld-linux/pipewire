@@ -13,13 +13,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.54
+Version:	0.3.55
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	1f35e7452422d3fb547e3b95b8c24be0
+# Source0-md5:	d750f2582fec567ae40a68f361633f11
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -379,16 +379,18 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/pipewire
 %{_datadir}/pipewire/client.conf
 %{_datadir}/pipewire/client-rt.conf
+%{_datadir}/pipewire/filter-chain.conf
 %{_datadir}/pipewire/minimal.conf
 %{_datadir}/pipewire/pipewire.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
-%{_datadir}/pipewire/filter-chain/duplicate-FL.conf
 %{_datadir}/pipewire/filter-chain/sink-dolby-surround.conf
 %{_datadir}/pipewire/filter-chain/sink-eq6.conf
 %{_datadir}/pipewire/filter-chain/sink-matrix-spatialiser.conf
+%{_datadir}/pipewire/filter-chain/sink-mix-FL-FR.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-5.1-kemar.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-7.1-hesuvi.conf
+%{_datadir}/pipewire/filter-chain/source-duplicate-FL.conf
 %{_datadir}/pipewire/filter-chain/source-rnnoise.conf
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
