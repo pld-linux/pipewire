@@ -13,13 +13,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.55
+Version:	0.3.56
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	d750f2582fec567ae40a68f361633f11
+# Source0-md5:	6c57ba1440895ecb4c7dc817f8d9e5ec
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -352,6 +352,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pipewire
+%attr(755,root,root) %{_bindir}/pipewire-avb
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-dot
@@ -382,10 +383,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/filter-chain.conf
 %{_datadir}/pipewire/minimal.conf
 %{_datadir}/pipewire/pipewire.conf
+%{_datadir}/pipewire/pipewire-avb.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
 %{_datadir}/pipewire/filter-chain/sink-dolby-surround.conf
 %{_datadir}/pipewire/filter-chain/sink-eq6.conf
+%{_datadir}/pipewire/filter-chain/sink-make-LFE.conf
 %{_datadir}/pipewire/filter-chain/sink-matrix-spatialiser.conf
 %{_datadir}/pipewire/filter-chain/sink-mix-FL-FR.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-5.1-kemar.conf
@@ -396,6 +399,7 @@ rm -rf $RPM_BUILD_ROOT
 %{systemduserunitdir}/pipewire.socket
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-access.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-avb.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
 # R: webrtc-audio-processing >= 0.2
@@ -438,6 +442,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/audiomixer/libspa-audiomixer.so
 %dir %{_libdir}/spa-0.2/audiotestsrc
 %attr(755,root,root) %{_libdir}/spa-0.2/audiotestsrc/libspa-audiotestsrc.so
+%dir %{_libdir}/spa-0.2/avb
+%attr(755,root,root) %{_libdir}/spa-0.2/avb/libspa-avb.so
 %dir %{_libdir}/spa-0.2/control
 %attr(755,root,root) %{_libdir}/spa-0.2/control/libspa-control.so
 %dir %{_libdir}/spa-0.2/support
