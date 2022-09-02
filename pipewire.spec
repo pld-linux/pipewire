@@ -336,10 +336,10 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 rm -rf $RPM_BUILD_ROOT
 
 %post
-%systemd_user_post pipewire.service pipewire.socket
+%systemd_user_post filter-chain.service pipewire.service pipewire.socket
 
 %preun
-%systemd_user_preun pipewire.service pipewire.socket
+%systemd_user_preun filter-chain.service pipewire.service pipewire.socket
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
