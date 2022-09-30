@@ -1,5 +1,6 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
 # - libcamera integration (no releases yet; ARM specific?)
+# - enable bluez5-codec-lc3
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -13,13 +14,13 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.58
+Version:	0.3.59
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 #Source0Download: https://github.com/PipeWire/pipewire/releases
 Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	6b88efbe1018716ccdad401c7e0e3f64
+# Source0-md5:	1631ae896a35854b63308c0d6ad916d4
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 %if %{with jack}
@@ -36,7 +37,7 @@ BuildRequires:	docutils
 BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
-BuildRequires:	gcc >= 5:3.2
+BuildRequires:	gcc >= 6:4.9
 BuildRequires:	gettext-tools
 %if %{with gstreamer}
 BuildRequires:	glib2-devel >= 1:2.32.0
