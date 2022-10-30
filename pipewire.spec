@@ -1,5 +1,4 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
-# - libcamera integration (no releases yet; ARM specific?)
 # - enable bluez5-codec-lc3
 #
 # Conditional build:
@@ -7,6 +6,7 @@
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
+%bcond_with	libcamera	# libcamera plugin
 %bcond_without	lv2		# LV2 plugins support
 %bcond_without	roc		# ROC modules
 %bcond_without	x11		# X11 bell support
@@ -53,10 +53,10 @@ BuildRequires:	ldacBT-devel
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
 %endif
-BuildRequires:	libcap-devel
+%{?with_libcamera:BuildRequires:	libcamera-devel}
 %{?with_x11:BuildRequires:	libcanberra-devel}
-# for libcamera
-#BuildRequires:	libdrm-devel >= 2.4.98
+BuildRequires:	libcap-devel
+%{?with_libcamera:BuildRequires:	libdrm-devel >= 2.4.98}
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
@@ -201,6 +201,18 @@ PipeWire SPA plugin to play and record audio with JACK API.
 Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu
 API JACK.
 
+%package spa-module-libcamera
+Summary:	PipeWire SPA plugin to access cameras through libcamera
+Summary(pl.UTF-8):	Wtyczka PipeWire SPA do dostępu do kamer przez libcamera
+Group:		Libraries
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description spa-module-libcamera
+PipeWire SPA plugin to access cameras through libcamera.
+
+%description spa-module-libcamera -l pl.UTF-8
+Wtyczka PipeWire SPA do dostępu do kamer przez libcamera.
+
 %package spa-module-vulkan
 Summary:	PipeWire SPA plugin to generate video frames using Vulkan
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana
@@ -307,6 +319,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
 	%{!?with_jack:-Djack=disabled} \
+	-Dlibcamera=%{__enabled_disabled libcamera} \
 	%{!?with_lv2:-Dlv2=disabled} \
 	-Dman=enabled \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
@@ -540,6 +553,14 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/jack
 # R: jack-audio-connection-kit-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/jack/libspa-jack.so
+%endif
+
+%if %{with libcamera}
+%files spa-module-libcamera
+%defattr(644,root,root,755)
+%dir %{_libdir}/spa-0.2/libcamera
+# R: libcamera
+%attr(755,root,root) %{_libdir}/spa-0.2/libcamera/libspa-libcamera.so
 %endif
 
 %files spa-module-vulkan
