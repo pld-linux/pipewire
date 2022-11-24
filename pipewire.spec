@@ -14,15 +14,15 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.59
+Version:	0.3.61
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
-#Source0Download: https://github.com/PipeWire/pipewire/releases
-Source0:	https://github.com/PipeWire/pipewire/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	1631ae896a35854b63308c0d6ad916d4
+Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	03453b2fac9eab38a1083e1b8314bd0a
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
+BuildRequires:	ModemManager-devel >= 1.10.0
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
 %endif
@@ -315,6 +315,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %meson build \
 	-Daudiotestsrc=enabled \
 	-Dbluez5-backend-hsphfpd=enabled \
+	-Dbluez5-backend-native-mm=enabled \
 	%{?with_apidocs:-Ddocs=enabled} \
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
@@ -438,6 +439,8 @@ rm -rf $RPM_BUILD_ROOT
 # R: openssl
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-sink.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-source.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
