@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.63
+Version:	0.3.64
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	941387127921188d20a263f565f3e339
+# Source0-md5:	e37730d11bd0c923e423f0a369826fd4
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -70,7 +70,7 @@ BuildRequires:	opus-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
-%{?with_roc:BuildRequires:	roc-toolkit-devel}
+%{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.2.0}
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
