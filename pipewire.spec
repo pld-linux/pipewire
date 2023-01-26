@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.64
+Version:	0.3.65
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	e37730d11bd0c923e423f0a369826fd4
+# Source0-md5:	5c31850705cacd12398da01b9b11cfd0
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -75,6 +75,7 @@ BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
+BuildRequires:	tinycompress-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
@@ -316,6 +317,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	-Daudiotestsrc=enabled \
 	-Dbluez5-backend-hsphfpd=enabled \
 	-Dbluez5-backend-native-mm=enabled \
+	-Dcompress-offload=enabled \
 	%{?with_apidocs:-Ddocs=enabled} \
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
