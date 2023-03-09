@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.66
+Version:	0.3.67
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	dbcaa4aabf22fa8d34eaa2fd880e831a
+# Source0-md5:	2c9807b2878418be900a220aa4ff6974
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -75,7 +75,6 @@ BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
-BuildRequires:	tinycompress-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing-devel >= 0.2
 BuildRequires:	webrtc-audio-processing-devel < 1.0
@@ -378,6 +377,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-dot
 %attr(755,root,root) %{_bindir}/pw-dsdplay
 %attr(755,root,root) %{_bindir}/pw-dump
+%attr(755,root,root) %{_bindir}/pw-encplay
 %attr(755,root,root) %{_bindir}/pw-link
 %attr(755,root,root) %{_bindir}/pw-loopback
 %attr(755,root,root) %{_bindir}/pw-metadata
