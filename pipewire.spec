@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.67
+Version:	0.3.68
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	2c9807b2878418be900a220aa4ff6974
+# Source0-md5:	e0572cb5ff19411fb51c88b9b156acca
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -62,7 +62,7 @@ BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libusb-devel >= 1.0
 %{?with_lv2:BuildRequires:	lilv-devel}
-BuildRequires:	meson >= 0.59.0
+BuildRequires:	meson >= 0.61.1
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	openssl-devel
@@ -405,6 +405,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/pipewire.conf
 %{_datadir}/pipewire/pipewire-aes67.conf
 %{_datadir}/pipewire/pipewire-avb.conf
+%dir %{_datadir}/pipewire/client-rt.conf.avail
+%{_datadir}/pipewire/client-rt.conf.avail/20-upmix.conf
+%dir %{_datadir}/pipewire/client.conf.avail
+%{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
 %{_datadir}/pipewire/filter-chain/sink-dolby-surround.conf
@@ -416,6 +420,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-7.1-hesuvi.conf
 %{_datadir}/pipewire/filter-chain/source-duplicate-FL.conf
 %{_datadir}/pipewire/filter-chain/source-rnnoise.conf
+%dir %{_datadir}/pipewire/pipewire-pulse.conf.avail
+%{_datadir}/pipewire/pipewire-pulse.conf.avail/20-upmix.conf
+%dir %{_datadir}/pipewire/pipewire.conf.avail
+%{_datadir}/pipewire/pipewire.conf.avail/10-rates.conf
+%{_datadir}/pipewire/pipewire.conf.avail/20-upmix.conf
 %{systemduserunitdir}/filter-chain.service
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
@@ -445,6 +454,8 @@ rm -rf $RPM_BUILD_ROOT
 # R: openssl
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-sap.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-session.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-source.so
 # R: dbus-libs
