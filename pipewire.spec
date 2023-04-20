@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.69
+Version:	0.3.70
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	321625a09b8e2e96bc2dca48870833dd
+# Source0-md5:	2f4f2fe2a60b72f3ead5472f9433973c
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -374,6 +374,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pipewire-avb
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
+%attr(755,root,root) %{_bindir}/pw-config
 %attr(755,root,root) %{_bindir}/pw-dot
 %attr(755,root,root) %{_bindir}/pw-dsdplay
 %attr(755,root,root) %{_bindir}/pw-dump
@@ -500,6 +501,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pipewire.1*
 %{_mandir}/man1/pw-cat.1*
 %{_mandir}/man1/pw-cli.1*
+%{_mandir}/man1/pw-config.1*
 %{_mandir}/man1/pw-dot.1*
 %{_mandir}/man1/pw-link.1*
 %{_mandir}/man1/pw-metadata.1*
