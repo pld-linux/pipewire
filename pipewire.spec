@@ -14,12 +14,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.70
+Version:	0.3.71
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	2f4f2fe2a60b72f3ead5472f9433973c
+# Source0-md5:	6a40c2b641c7b1c42c508829e619a65e
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -595,6 +595,8 @@ rm -rf $RPM_BUILD_ROOT
 %files jack
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pw-jack
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-jack-tunnel.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-jackdbus-detect.so
 %dir %{_libdir}/pipewire-0.3/jack
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjack.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
