@@ -3,6 +3,7 @@
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
+%bcond_without	ffado		# FFADO driver
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
@@ -14,12 +15,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.71
+Version:	0.3.72
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	6a40c2b641c7b1c42c508829e619a65e
+# Source0-md5:	8e84abc4b0ef8fae254916be0f6deef5
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -57,6 +58,7 @@ BuildRequires:	libatomic-devel
 %{?with_x11:BuildRequires:	libcanberra-devel}
 BuildRequires:	libcap-devel
 %{?with_libcamera:BuildRequires:	libdrm-devel >= 2.4.98}
+%{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
@@ -66,7 +68,7 @@ BuildRequires:	meson >= 0.61.1
 BuildRequires:	ncurses-devel
 BuildRequires:	ninja >= 1.5
 BuildRequires:	openssl-devel
-BuildRequires:	opus-devel
+BuildRequires:	opus-devel >= 0.9.7
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	readline-devel >= 8.1.1-2
@@ -85,6 +87,7 @@ BuildRequires:	xorg-lib-libXfixes-devel >= 6
 Requires(post,preun):	systemd-units >= 1:250.1
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	libsndfile >= 1.0.20
+Requires:	opus >= 0.9.7
 Requires:	pipewire-session-manager
 Requires:	systemd-units >= 1:250.1
 Suggests:	rtkit
@@ -239,6 +242,18 @@ PipeWire JACK sound system integration.
 %description jack -l pl.UTF-8
 Integracja PipeWire z systemem dźwięku JACK.
 
+%package ffado
+Summary:	PipeWire FFADO integration
+Summary(pl.UTF-8):	Integracja PipeWire z FFADO
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description ffado
+PipeWire FFADO (Free FireWire Audio Drivers) integration.
+
+%description ffado -l pl.UTF-8
+Integracja PipeWire z FFADO (Free FireWire Audio Drivers).
+
 %package pulseaudio
 Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
@@ -322,6 +337,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
 	%{!?with_jack:-Djack=disabled} \
 	-Dlibcamera=%{__enabled_disabled libcamera} \
+	-Dlibffado=%{__enabled_disabled ffado} \
 	%{!?with_lv2:-Dlv2=disabled} \
 	-Dman=enabled \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
@@ -442,6 +458,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-driver.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-manager.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pipe-tunnel.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
@@ -590,6 +608,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/vulkan
 # R: Vulkan-Loader
 %attr(755,root,root) %{_libdir}/spa-0.2/vulkan/libspa-vulkan.so
+
+%if %{with ffado}
+%files ffado
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-ffado-driver.so
+%endif
 
 %if %{with jack}
 %files jack
