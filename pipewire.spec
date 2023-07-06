@@ -8,6 +8,7 @@
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
 %bcond_with	libcamera	# libcamera plugin
+%bcond_without	libmysofa	# libmysofa filter chain support
 %bcond_without	lv2		# LV2 plugins support
 %bcond_without	roc		# ROC modules
 %bcond_without	x11		# X11 bell support
@@ -15,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.72
+Version:	0.3.73
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	8e84abc4b0ef8fae254916be0f6deef5
+# Source0-md5:	64c6cfae9c29898133fe650e511b18e6
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -60,6 +61,7 @@ BuildRequires:	libcap-devel
 %{?with_libcamera:BuildRequires:	libdrm-devel >= 2.4.98}
 %{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
+%{?with_libmysofa:BuildRequires:	libmysofa-devel}
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libusb-devel >= 1.0
@@ -90,6 +92,8 @@ Requires:	libsndfile >= 1.0.20
 Requires:	opus >= 0.9.7
 Requires:	pipewire-session-manager
 Requires:	systemd-units >= 1:250.1
+%{?with_lv2:Suggests:	%{name}-filter-chain-lv2 = %{version}-%{release}}
+%{?with_libmysofa:Suggests:	%{name}-filter-chain-sofa = %{version}-%{release}}
 Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -228,6 +232,30 @@ PipeWire SPA plugin to generate video frames using Vulkan.
 
 %description spa-module-vulkan -l pl.UTF-8
 Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana.
+
+%package filter-chain-lv2
+Summary:	PipeWire LV2 filter chain
+Summary(pl.UTF-8):	Łańcuch filtrów bazujących na LV2 dla PipeWire
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description filter-chain-lv2
+PipeWire LV2 filter chain.
+
+%description filter-chain-lv2 -l pl.UTF-8
+Łańcuch filtrów bazujących na LV2 dla PipeWire.
+
+%package filter-chain-sofa
+Summary:	PipeWire libmysofa filter chain
+Summary(pl.UTF-8):	Łańcuch filtrów bazujących na libmysofa dla PipeWire
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description filter-chain-sofa
+PipeWire libmysofa filter chain.
+
+%description filter-chain-sofa -l pl.UTF-8
+Łańcuch filtrów bazujących na libmysofa dla PipeWire.
 
 %package jack
 Summary:	PipeWire JACK sound system integration
@@ -613,6 +641,18 @@ rm -rf $RPM_BUILD_ROOT
 %files ffado
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-ffado-driver.so
+%endif
+
+%if %{with lv2}
+%files filter-chain-lv2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain-lv2.so
+%endif
+
+%if %{with libmysofa}
+%files filter-chain-sofa
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain-sofa.so
 %endif
 
 %if %{with jack}
