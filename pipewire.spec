@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.74
+Version:	0.3.75
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	9905968359dad72fc964a1e4989582dc
+# Source0-md5:	52237df64aec9d95fd30e202eb2d372d
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -55,7 +55,7 @@ BuildRequires:	ldacBT-devel
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
 %endif
-%{?with_libcamera:BuildRequires:	libcamera-devel}
+%{?with_libcamera:BuildRequires:	libcamera-devel >= 0.1.0}
 %{?with_x11:BuildRequires:	libcanberra-devel}
 BuildRequires:	libcap-devel
 %{?with_libcamera:BuildRequires:	libdrm-devel >= 2.4.98}
@@ -213,6 +213,7 @@ Summary:	PipeWire SPA plugin to access cameras through libcamera
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do dostępu do kamer przez libcamera
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	libcamera >= 0.1.0
 
 %description spa-module-libcamera
 PipeWire SPA plugin to access cameras through libcamera.
