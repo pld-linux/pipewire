@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.75
+Version:	0.3.76
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	52237df64aec9d95fd30e202eb2d372d
+# Source0-md5:	10bf151d8a790f8684c9c85eb18507f9
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -513,6 +513,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node-factory.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-vban-recv.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-vban-send.so
 # R: avahi-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-zeroconf-discover.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/v4l2/libpw-v4l2.so
