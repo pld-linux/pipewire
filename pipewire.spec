@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.77
+Version:	0.3.78
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	70eeb9be6411b33a2adf8834ca4163b7
+# Source0-md5:	4182864a60eaf09855545c439be12ff7
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
