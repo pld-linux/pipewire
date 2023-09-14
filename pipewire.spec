@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.79
+Version:	0.3.80
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	221d9128b085d17295964c7f15622f13
+# Source0-md5:	0b74d8fb146176aa0bd94918bb094bbe
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -58,7 +58,7 @@ BuildRequires:	libatomic-devel
 %{?with_libcamera:BuildRequires:	libcamera-devel >= 0.1.0}
 %{?with_x11:BuildRequires:	libcanberra-devel}
 BuildRequires:	libcap-devel
-%{?with_libcamera:BuildRequires:	libdrm-devel >= 2.4.98}
+BuildRequires:	libdrm-devel >= 2.4.98
 %{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
 %{?with_libmysofa:BuildRequires:	libmysofa-devel}
@@ -80,8 +80,7 @@ BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
-BuildRequires:	webrtc-audio-processing-devel >= 0.2
-BuildRequires:	webrtc-audio-processing-devel < 1.0
+BuildRequires:	webrtc-audio-processing1-devel >= 1.2
 %if %{with x11}
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXfixes-devel >= 6
@@ -310,6 +309,19 @@ PipeWire ROC streaming integration.
 %description roc -l pl.UTF-8
 Integracja PipeWire ze strumieniami ROC.
 
+%package vulkan
+Summary:	PipeWire Vulkan integration
+Summary(pl.UTF-8):	Integracja PipeWire z Vulkanem
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-spa-module-vulkan
+
+%description vulkan
+PipeWire Vulkan integration.
+
+%description vulkan -l pl.UTF-8
+Integracja PipeWire z Vulkanem.
+
 %package x11-bell
 Summary:	PipeWire module for X11 bell support
 Summary(pl.UTF-8):	Moduł PipeWire do obsługi dzwonka X11
@@ -417,6 +429,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pipewire
 %attr(755,root,root) %{_bindir}/pipewire-aes67
 %attr(755,root,root) %{_bindir}/pipewire-avb
+%attr(755,root,root) %{_bindir}/pipewire-vulkan
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-config
@@ -480,7 +493,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-combine-stream.so
-# R: webrtc-audio-processing >= 0.2
+# R: webrtc-audio-processing1 >= 1.2
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-echo-cancel.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-fallback-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain.so
@@ -520,7 +533,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/v4l2/libpw-v4l2.so
 %dir %{_libdir}/spa-0.2/aec
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-null.so
-# R: webrtc-audio-processing >= 0.2
+# R: webrtc-audio-processing1 >= 1.2
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-webrtc.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
@@ -690,6 +703,11 @@ rm -rf $RPM_BUILD_ROOT
 # R: roc-toolkit
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-source.so
 %endif
+
+%files vulkan
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pipewire-vulkan
+%{_datadir}/pipewire/pipewire-vulkan.conf
 
 %if %{with x11}
 %files x11-bell
