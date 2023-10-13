@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.81
+Version:	0.3.82
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	2cfeee4091cf989c327f5b0be0fe7e8e
+# Source0-md5:	6e6f9b373f8ee358d781e662ad64c85e
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -62,6 +62,7 @@ BuildRequires:	libdrm-devel >= 2.4.98
 %{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
 %{?with_libmysofa:BuildRequires:	libmysofa-devel}
+BuildRequires:	libselinux-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
 BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libusb-devel >= 1.0
