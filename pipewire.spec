@@ -16,19 +16,19 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.82
-Release:	2
+Version:	0.3.83
+Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	6e6f9b373f8ee358d781e662ad64c85e
+# Source0-md5:	54434df181f7c5e5423eb772ed11fc5e
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
 %if %{with jack}
 BuildRequires:	SDL2-devel >= 2
 %endif
-BuildRequires:	Vulkan-Loader-devel >= 1.1.69
+BuildRequires:	Vulkan-Loader-devel >= 1.2.170
 BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
@@ -226,7 +226,7 @@ Summary:	PipeWire SPA plugin to generate video frames using Vulkan
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	Vulkan-Loader >= 1.1.69
+Requires:	Vulkan-Loader >= 1.2.170
 
 %description spa-module-vulkan
 PipeWire SPA plugin to generate video frames using Vulkan.
