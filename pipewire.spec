@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	0.3.85
+Version:	1.0.0
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	968966a7002ea4b88d1d238a1e55668c
+# Source0-md5:	5dfff39e6778ab364e3b7f9be22ba0c6
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -33,9 +33,7 @@ BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
-# rst2man
-BuildRequires:	docutils
-%{?with_apidocs:BuildRequires:	doxygen}
+BuildRequires:	doxygen
 BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
@@ -74,8 +72,10 @@ BuildRequires:	openssl-devel
 BuildRequires:	opus-devel >= 0.9.7
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
+BuildRequires:	python3
+BuildRequires:	python3-modules
 BuildRequires:	readline-devel >= 8.1.1-2
-%{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.2.0}
+%{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.3.0}
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
@@ -566,13 +566,47 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pw-cli.1*
 %{_mandir}/man1/pw-config.1*
 %{_mandir}/man1/pw-dot.1*
+%{_mandir}/man1/pw-dump.1*
 %{_mandir}/man1/pw-link.1*
+%{_mandir}/man1/pw-loopback.1*
 %{_mandir}/man1/pw-metadata.1*
 %{_mandir}/man1/pw-mididump.1*
 %{_mandir}/man1/pw-mon.1*
 %{_mandir}/man1/pw-profiler.1*
 %{_mandir}/man1/pw-top.1*
 %{_mandir}/man5/pipewire.conf.5*
+%{_mandir}/man7/libpipewire-module-access.7*
+%{_mandir}/man7/libpipewire-module-adapter.7*
+%{_mandir}/man7/libpipewire-module-avb.7*
+%{_mandir}/man7/libpipewire-module-client-device.7*
+%{_mandir}/man7/libpipewire-module-client-node.7*
+%{_mandir}/man7/libpipewire-module-combine-stream.7*
+%{_mandir}/man7/libpipewire-module-echo-cancel.7*
+%{_mandir}/man7/libpipewire-module-fallback-sink.7*
+%{_mandir}/man7/libpipewire-module-filter-chain.7*
+%{_mandir}/man7/libpipewire-module-link-factory.7*
+%{_mandir}/man7/libpipewire-module-loopback.7*
+%{_mandir}/man7/libpipewire-module-metadata.7*
+%{_mandir}/man7/libpipewire-module-netjack2-driver.7*
+%{_mandir}/man7/libpipewire-module-netjack2-manager.7*
+%{_mandir}/man7/libpipewire-module-pipe-tunnel.7*
+%{_mandir}/man7/libpipewire-module-portal.7*
+%{_mandir}/man7/libpipewire-module-profiler.7*
+%{_mandir}/man7/libpipewire-module-protocol-native.7*
+%{_mandir}/man7/libpipewire-module-protocol-pulse.7*
+%{_mandir}/man7/libpipewire-module-protocol-simple.7*
+%{_mandir}/man7/libpipewire-module-raop-discover.7*
+%{_mandir}/man7/libpipewire-module-raop-sink.7*
+%{_mandir}/man7/libpipewire-module-rt.7*
+%{_mandir}/man7/libpipewire-module-rtp-sap.7*
+%{_mandir}/man7/libpipewire-module-rtp-session.7*
+%{_mandir}/man7/libpipewire-module-rtp-sink.7*
+%{_mandir}/man7/libpipewire-module-rtp-source.7*
+%{_mandir}/man7/libpipewire-module-session-manager.7*
+%{_mandir}/man7/libpipewire-module-vban-recv.7*
+%{_mandir}/man7/libpipewire-module-vban-send.7*
+%{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
+%{_mandir}/man7/libpipewire-modules.7*
 
 %files libs
 %defattr(644,root,root,755)
@@ -658,6 +692,7 @@ rm -rf $RPM_BUILD_ROOT
 %files ffado
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-ffado-driver.so
+%{_mandir}/man7/libpipewire-module-ffado-driver.7*
 %endif
 
 %if %{with lv2}
@@ -684,6 +719,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %{_datadir}/pipewire/jack.conf
 %{_mandir}/man1/pw-jack.1*
+%{_mandir}/man7/libpipewire-module-jack-tunnel.7.gz
+%{_mandir}/man7/libpipewire-module-jackdbus-detect.7.gz
 %endif
 
 %files pulseaudio
@@ -695,6 +732,8 @@ rm -rf $RPM_BUILD_ROOT
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
 %{_mandir}/man1/pipewire-pulse.1*
+%{_mandir}/man5/pipewire-pulse.conf.5*
+%{_mandir}/man7/libpipewire-module-pulse-tunnel.7*
 
 %if %{with roc}
 %files roc
@@ -703,6 +742,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-sink.so
 # R: roc-toolkit
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-source.so
+%{_mandir}/man7/libpipewire-module-roc-sink.7*
+%{_mandir}/man7/libpipewire-module-roc-source.7*
 %endif
 
 %files vulkan
@@ -715,6 +756,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 # R: libX11 libXfixes libcanberra
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-x11-bell.so
+%{_mandir}/man7/libpipewire-module-x11-bell.7*
 %endif
 
 %files -n alsa-plugin-pipewire
