@@ -403,6 +403,7 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 
 # packaged as %doc in -apidocs
 %{?with_apidocs:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/libpipewire-module-example-*.7*
 
 %find_lang %{name}
 
@@ -607,6 +608,38 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
 %{_mandir}/man7/libpipewire-modules.7*
+%{_mandir}/man7/pipewire-pulse-module-alsa-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-alsa-source.7*
+%{_mandir}/man7/pipewire-pulse-module-always-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-combine-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-echo-cancel.7*
+%{_mandir}/man7/pipewire-pulse-module-gsettings.7*
+%{_mandir}/man7/pipewire-pulse-module-jackdbus-detect.7*
+%{_mandir}/man7/pipewire-pulse-module-ladspa-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-ladspa-source.7*
+%{_mandir}/man7/pipewire-pulse-module-loopback.7*
+%{_mandir}/man7/pipewire-pulse-module-native-protocol-tcp.7*
+%{_mandir}/man7/pipewire-pulse-module-null-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-pipe-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-pipe-source.7*
+%{_mandir}/man7/pipewire-pulse-module-raop-discover.7*
+%{_mandir}/man7/pipewire-pulse-module-remap-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-remap-source.7*
+%{_mandir}/man7/pipewire-pulse-module-roc-sink-input.7*
+%{_mandir}/man7/pipewire-pulse-module-roc-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-roc-source.7*
+%{_mandir}/man7/pipewire-pulse-module-rtp-recv.7*
+%{_mandir}/man7/pipewire-pulse-module-rtp-send.7*
+%{_mandir}/man7/pipewire-pulse-module-simple-protocol-tcp.7*
+%{_mandir}/man7/pipewire-pulse-module-switch-on-connect.7*
+%{_mandir}/man7/pipewire-pulse-module-tunnel-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-tunnel-source.7*
+%{_mandir}/man7/pipewire-pulse-module-virtual-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-virtual-source.7*
+%{_mandir}/man7/pipewire-pulse-module-x11-bell.7*
+%{_mandir}/man7/pipewire-pulse-module-zeroconf-discover.7*
+%{_mandir}/man7/pipewire-pulse-module-zeroconf-publish.7*
+%{_mandir}/man7/pipewire-pulse-modules.7*
 
 %files libs
 %defattr(644,root,root,755)
