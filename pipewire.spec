@@ -17,7 +17,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	1.0.0
-Release:	2
+Release:	3
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
@@ -459,17 +459,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/spa-resample
 %dir %{_sysconfdir}/pipewire
 %dir %{_datadir}/pipewire
-%{_datadir}/pipewire/client.conf
-%{_datadir}/pipewire/client-rt.conf
 %{_datadir}/pipewire/filter-chain.conf
 %{_datadir}/pipewire/minimal.conf
 %{_datadir}/pipewire/pipewire.conf
 %{_datadir}/pipewire/pipewire-aes67.conf
 %{_datadir}/pipewire/pipewire-avb.conf
-%dir %{_datadir}/pipewire/client-rt.conf.avail
-%{_datadir}/pipewire/client-rt.conf.avail/20-upmix.conf
-%dir %{_datadir}/pipewire/client.conf.avail
-%{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
 %{_datadir}/pipewire/filter-chain/sink-dolby-surround.conf
@@ -642,6 +636,12 @@ rm -rf $RPM_BUILD_ROOT
 # R: systemd-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
+%{_datadir}/pipewire/client.conf
+%{_datadir}/pipewire/client-rt.conf
+%dir %{_datadir}/pipewire/client-rt.conf.avail
+%{_datadir}/pipewire/client-rt.conf.avail/20-upmix.conf
+%dir %{_datadir}/pipewire/client.conf.avail
+%{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/spa-0.2
 %{_mandir}/man7/libpipewire-module-adapter.7*
 %{_mandir}/man7/libpipewire-module-client-device.7*
