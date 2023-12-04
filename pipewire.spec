@@ -17,7 +17,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	1.0.0
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
@@ -490,10 +490,7 @@ rm -rf $RPM_BUILD_ROOT
 %{systemduserunitdir}/pipewire.service
 %{systemduserunitdir}/pipewire.socket
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-access.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-avb.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-combine-stream.so
 # R: webrtc-audio-processing1 >= 1.2
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-echo-cancel.so
@@ -501,29 +498,24 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-link-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-driver.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-manager.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pipe-tunnel.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
-# R: systemd-libs
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-native.so
 # R: dbus-libs systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-simple.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-discover.so
 # R: openssl
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-sink.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-sap.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-session.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-sink.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-source.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node.so
@@ -537,22 +529,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-null.so
 # R: webrtc-audio-processing1 >= 1.2
 %attr(755,root,root) %{_libdir}/spa-0.2/aec/libspa-aec-webrtc.so
-%dir %{_libdir}/spa-0.2/audioconvert
-%attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
-%dir %{_libdir}/spa-0.2/audiomixer
-%attr(755,root,root) %{_libdir}/spa-0.2/audiomixer/libspa-audiomixer.so
 %dir %{_libdir}/spa-0.2/audiotestsrc
 %attr(755,root,root) %{_libdir}/spa-0.2/audiotestsrc/libspa-audiotestsrc.so
 %dir %{_libdir}/spa-0.2/avb
 %attr(755,root,root) %{_libdir}/spa-0.2/avb/libspa-avb.so
-%dir %{_libdir}/spa-0.2/control
-%attr(755,root,root) %{_libdir}/spa-0.2/control/libspa-control.so
-%dir %{_libdir}/spa-0.2/support
-# R: dbus-libs
-%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-dbus.so
-# R: systemd-libs
-%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
-%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
 %dir %{_libdir}/spa-0.2/v4l2
 # R: udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/v4l2/libspa-v4l2.so
@@ -577,33 +557,26 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pw-top.1*
 %{_mandir}/man5/pipewire.conf.5*
 %{_mandir}/man7/libpipewire-module-access.7*
-%{_mandir}/man7/libpipewire-module-adapter.7*
 %{_mandir}/man7/libpipewire-module-avb.7*
-%{_mandir}/man7/libpipewire-module-client-device.7*
-%{_mandir}/man7/libpipewire-module-client-node.7*
 %{_mandir}/man7/libpipewire-module-combine-stream.7*
 %{_mandir}/man7/libpipewire-module-echo-cancel.7*
 %{_mandir}/man7/libpipewire-module-fallback-sink.7*
 %{_mandir}/man7/libpipewire-module-filter-chain.7*
 %{_mandir}/man7/libpipewire-module-link-factory.7*
 %{_mandir}/man7/libpipewire-module-loopback.7*
-%{_mandir}/man7/libpipewire-module-metadata.7*
 %{_mandir}/man7/libpipewire-module-netjack2-driver.7*
 %{_mandir}/man7/libpipewire-module-netjack2-manager.7*
 %{_mandir}/man7/libpipewire-module-pipe-tunnel.7*
 %{_mandir}/man7/libpipewire-module-portal.7*
 %{_mandir}/man7/libpipewire-module-profiler.7*
-%{_mandir}/man7/libpipewire-module-protocol-native.7*
 %{_mandir}/man7/libpipewire-module-protocol-pulse.7*
 %{_mandir}/man7/libpipewire-module-protocol-simple.7*
 %{_mandir}/man7/libpipewire-module-raop-discover.7*
 %{_mandir}/man7/libpipewire-module-raop-sink.7*
-%{_mandir}/man7/libpipewire-module-rt.7*
 %{_mandir}/man7/libpipewire-module-rtp-sap.7*
 %{_mandir}/man7/libpipewire-module-rtp-session.7*
 %{_mandir}/man7/libpipewire-module-rtp-sink.7*
 %{_mandir}/man7/libpipewire-module-rtp-source.7*
-%{_mandir}/man7/libpipewire-module-session-manager.7*
 %{_mandir}/man7/libpipewire-module-vban-recv.7*
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
@@ -647,9 +620,36 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libpipewire-0.3.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpipewire-0.3.so.0
 %dir %{_libdir}/pipewire-0.3
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-adapter.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-device.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-client-node.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-metadata.so
+# R: systemd-libs
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-native.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rt.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
 %dir %{_libdir}/pipewire-0.3/v4l2
 %dir %{_libdir}/spa-0.2
+%dir %{_libdir}/spa-0.2/audioconvert
+%attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
+%dir %{_libdir}/spa-0.2/audiomixer
+%attr(755,root,root) %{_libdir}/spa-0.2/audiomixer/libspa-audiomixer.so
+%dir %{_libdir}/spa-0.2/control
+%attr(755,root,root) %{_libdir}/spa-0.2/control/libspa-control.so
+%dir %{_libdir}/spa-0.2/support
+# R: dbus-libs
+%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-dbus.so
+# R: systemd-libs
+%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
+%attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
 %dir %{_datadir}/spa-0.2
+%{_mandir}/man7/libpipewire-module-adapter.7*
+%{_mandir}/man7/libpipewire-module-client-device.7*
+%{_mandir}/man7/libpipewire-module-client-node.7*
+%{_mandir}/man7/libpipewire-module-metadata.7*
+%{_mandir}/man7/libpipewire-module-protocol-native.7*
+%{_mandir}/man7/libpipewire-module-rt.7*
+%{_mandir}/man7/libpipewire-module-session-manager.7*
 
 %files devel
 %defattr(644,root,root,755)
