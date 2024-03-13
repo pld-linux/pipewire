@@ -16,12 +16,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.0.3
+Version:	1.0.4
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	92eb16fb925aa9dc9191d8ef7b04687d
+# Source0-md5:	d6b9ba58751c70a8d6b134cad89b33b3
 Patch0:		%{name}-gcc.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
@@ -548,8 +548,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/pw-mididump.1*
 %{_mandir}/man1/pw-mon.1*
 %{_mandir}/man1/pw-profiler.1*
+%{_mandir}/man1/pw-reserve.1*
 %{_mandir}/man1/pw-top.1*
+%{_mandir}/man1/pw-v4l2.1*
+%{_mandir}/man1/spa-inspect.1*
+%{_mandir}/man1/spa-json-dump.1*
+%{_mandir}/man1/spa-monitor.1*
+%{_mandir}/man1/spa-resample.1*
 %{_mandir}/man5/pipewire.conf.5*
+%{_mandir}/man5/pipewire-filter-chain.conf.5*
 %{_mandir}/man7/libpipewire-module-access.7*
 %{_mandir}/man7/libpipewire-module-avb.7*
 %{_mandir}/man7/libpipewire-module-combine-stream.7*
@@ -575,6 +582,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
 %{_mandir}/man7/libpipewire-modules.7*
+%{_mandir}/man7/pipewire-devices.7*
 %{_mandir}/man7/pipewire-pulse-module-alsa-sink.7*
 %{_mandir}/man7/pipewire-pulse-module-alsa-source.7*
 %{_mandir}/man7/pipewire-pulse-module-always-sink.7*
@@ -643,6 +651,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/pipewire/client.conf.avail
 %{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/spa-0.2
+%{_mandir}/man5/pipewire-client.conf.5*
 %{_mandir}/man7/libpipewire-module-adapter.7*
 %{_mandir}/man7/libpipewire-module-client-device.7*
 %{_mandir}/man7/libpipewire-module-client-node.7*
@@ -672,6 +681,7 @@ rm -rf $RPM_BUILD_ROOT
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
 %{_datadir}/alsa-card-profile
+%{_mandir}/man1/spa-acp-tool.1*
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
@@ -752,6 +762,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %{_datadir}/pipewire/jack.conf
 %{_mandir}/man1/pw-jack.1*
+%{_mandir}/man5/pipewire-jack.conf.5*
 %{_mandir}/man7/libpipewire-module-jack-tunnel.7.gz
 %{_mandir}/man7/libpipewire-module-jackdbus-detect.7.gz
 %endif
