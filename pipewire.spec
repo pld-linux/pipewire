@@ -1,5 +1,5 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
-# - enable bluez5-codec-lc3
+# - enable bluez5-codec-lc3plus
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -59,6 +59,7 @@ BuildRequires:	libcap-devel
 BuildRequires:	libdrm-devel >= 2.4.98
 %{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
+BuildRequires:	liblc3-devel
 %{?with_libmysofa:BuildRequires:	libmysofa-devel}
 BuildRequires:	libselinux-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
@@ -694,6 +695,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-aptx.so
 # R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
+# R: liblc3
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-lc3.so
 # R: ldacBT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
 # R: opus
