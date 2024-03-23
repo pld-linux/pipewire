@@ -1,5 +1,4 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
-# - enable bluez5-codec-lc3plus
 #
 # Conditional build:
 %bcond_without	apidocs		# Doxygen based API documentation
@@ -7,6 +6,7 @@
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
+%bcond_with	lc3plus		# Bluez lc3plus codec
 %bcond_with	libcamera	# libcamera plugin
 %bcond_without	libmysofa	# libmysofa filter chain support
 %bcond_without	lv2		# LV2 plugins support
@@ -23,6 +23,7 @@ Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	d6b9ba58751c70a8d6b134cad89b33b3
 Patch0:		%{name}-gcc.patch
+Patch1:		%{name}-lc3plus.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
 %if %{with jack}
@@ -49,6 +50,7 @@ BuildRequires:	gstreamer-plugins-base-devel >= 1.10
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.17}
 BuildRequires:	ldacBT-devel
+%{?with_lc3plus:BuildRequires:	libLC3plus-devel >= 1.4.1}
 %ifarch i386 i486 %{armv4} %{armv5} %{armv6}
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
@@ -368,12 +370,14 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %meson build \
 	-Daudiotestsrc=enabled \
 	-Dbluez5-backend-hsphfpd=enabled \
 	-Dbluez5-backend-native-mm=enabled \
+	%{!?with_lc3plus:-Dbluez5-codec-lc3plus=disabled} \
 	-Dcompress-offload=enabled \
 	%{?with_apidocs:-Ddocs=enabled} \
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
@@ -697,6 +701,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
 # R: liblc3
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-lc3.so
+%if %{with lc3plus}
+# R: libLC3plus
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-lc3plus.so
+%endif
 # R: ldacBT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
 # R: opus

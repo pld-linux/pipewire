@@ -1,0 +1,169 @@
+Adjust for LC3plus 1.4.1
+--- pipewire-1.0.4/spa/plugins/bluez5/a2dp-codec-lc3plus.c.orig	2024-03-13 09:22:08.000000000 +0100
++++ pipewire-1.0.4/spa/plugins/bluez5/a2dp-codec-lc3plus.c	2024-03-23 16:29:16.174945983 +0100
+@@ -331,7 +331,9 @@ static void *codec_init(const struct med
+ 	struct spa_audio_info config_info;
+ 	int size;
+ 	int res;
++	int32_t lfe[LC3PLUS_MAX_CHANNELS];
+ 
++	memset(lfe, 0, sizeof(lfe));
+ 	if (info->media_type != SPA_MEDIA_TYPE_audio ||
+ 	    info->media_subtype != SPA_MEDIA_SUBTYPE_raw ||
+ 	    info->info.raw.format != SPA_AUDIO_FORMAT_S24_32) {
+@@ -371,15 +373,11 @@ static void *codec_init(const struct med
+ 	}
+ 	if ((this->enc = calloc(1, size)) == NULL)
+ 		goto error_errno;
+-	if (lc3plus_enc_init(this->enc, this->samplerate, this->channels) != LC3PLUS_OK) {
++	if (lc3plus_enc_init(this->enc, this->samplerate, this->channels, 1, lfe) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+-	if (lc3plus_enc_set_frame_ms(this->enc, this->frame_dms/10.0f) != LC3PLUS_OK) {
+-		res = -EINVAL;
+-		goto error;
+-	}
+-	if (lc3plus_enc_set_hrmode(this->enc, 1) != LC3PLUS_OK) {
++	if (lc3plus_enc_set_frame_dms(this->enc, this->frame_dms) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+@@ -400,15 +398,11 @@ static void *codec_init(const struct med
+ 	}
+ 	if ((this->dec = calloc(1, size)) == NULL)
+ 		goto error_errno;
+-	if (lc3plus_dec_init(this->dec, this->samplerate, this->channels, LC3PLUS_PLC_ADVANCED) != LC3PLUS_OK) {
++	if (lc3plus_dec_init(this->dec, this->samplerate, this->channels, LC3PLUS_PLC_ADVANCED, 1) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+-	if (lc3plus_dec_set_frame_ms(this->dec, this->frame_dms/10.0f) != LC3PLUS_OK) {
+-		res = -EINVAL;
+-		goto error;
+-	}
+-	if (lc3plus_dec_set_hrmode(this->dec, 1) != LC3PLUS_OK) {
++	if (lc3plus_dec_set_frame_dms(this->dec, this->frame_dms) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+@@ -533,6 +527,13 @@ static int codec_encode(void *data,
+ 	int size, processed;
+ 	int header_size = sizeof(struct rtp_header) + sizeof(struct rtp_payload);
+ 	int32_t *inputs[2];
++	void *scratch = NULL;
++
++#ifdef LC3PLUS_ENC_MAX_SCRATCH_SIZE
++	scratch = malloc(LC3PLUS_ENC_MAX_SCRATCH_SIZE);
++	if (scratch == NULL)
++		return -ENOMEM;
++#endif
+ 
+ 	if (src == NULL) {
+ 		/* Produce fragment packets.
+@@ -545,6 +546,9 @@ static int codec_encode(void *data,
+ 				this->e.fragment < dst ||
+ 				SPA_PTROFF(this->e.fragment, this->e.fragment_size, void) > SPA_PTROFF(dst, dst_size, void)) {
+ 			this->e.fragment = NULL;
++#ifdef LC3PLUS_ENC_MAX_SCRATCH_SIZE
++			free(scratch);
++#endif
+ 			return -EINVAL;
+ 		}
+ 
+@@ -564,6 +568,9 @@ static int codec_encode(void *data,
+ 			this->e.fragment = NULL;
+ 			*need_flush = NEED_FLUSH_ALL;
+ 		}
++#ifdef LC3PLUS_ENC_MAX_SCRATCH_SIZE
++		free(scratch);
++#endif
+ 		return 0;
+ 	}
+ 
+@@ -580,15 +587,19 @@ static int codec_encode(void *data,
+ 
+ 	if (this->channels == 1) {
+ 		inputs[0] = (int32_t *)src;
+-		res = lc3plus_enc24(this->enc, inputs, dst, &size);
++		res = lc3plus_enc24(this->enc, inputs, dst, &size, scratch);
+ 	} else {
+ 		inputs[0] = this->buf[0];
+ 		inputs[1] = this->buf[1];
+ 		deinterleave_32_c2(inputs, src, this->e.samples);
+-		res = lc3plus_enc24(this->enc, inputs, dst, &size);
++		res = lc3plus_enc24(this->enc, inputs, dst, &size, scratch);
+ 	}
+-	if (SPA_UNLIKELY(res != LC3PLUS_OK))
++	if (SPA_UNLIKELY(res != LC3PLUS_OK)) {
++#ifdef LC3PLUS_ENC_MAX_SCRATCH_SIZE
++		free(scratch);
++#endif
+ 		return -EINVAL;
++	}
+ 	*dst_out = size;
+ 
+ 	processed += this->e.codesize;
+@@ -596,6 +607,9 @@ static int codec_encode(void *data,
+ 	this->e.payload->frame_count++;
+ 
+ done:
++#ifdef LC3PLUS_ENC_MAX_SCRATCH_SIZE
++	free(scratch);
++#endif
+ 	if (this->e.payload->frame_count == 0)
+ 		return processed;
+ 	if (this->e.payload->frame_count < 0xf &&
+@@ -678,7 +692,13 @@ static SPA_UNUSED int codec_decode(void
+ 	int32_t *outputs[2];
+ 	int consumed;
+ 	int samples;
++	void *scratch = NULL;
+ 
++#ifdef LC3PLUS_DEC_MAX_SCRATCH_SIZE
++	scratch = malloc(LC3PLUS_DEC_MAX_SCRATCH_SIZE);
++	if (scratch == NULL)
++		return -ENOMEM;
++#endif
+ 	if (this->d.fragment_count > 0) {
+ 		/* Fragmented frame */
+ 		size_t avail;
+@@ -691,6 +711,9 @@ static SPA_UNUSED int codec_decode(void
+ 		if (this->d.fragment_count > 1) {
+ 			/* More fragments to come */
+ 			*dst_out = 0;
++#ifdef LC3PLUS_DEC_MAX_SCRATCH_SIZE
++			free(scratch);
++#endif
+ 			return consumed;
+ 		}
+ 
+@@ -706,18 +729,25 @@ static SPA_UNUSED int codec_decode(void
+ 
+ 	samples = lc3plus_dec_get_output_samples(this->dec);
+ 	*dst_out = samples * this->channels * sizeof(int32_t);
+-	if (dst_size < *dst_out)
++	if (dst_size < *dst_out) {
++#ifdef LC3PLUS_DEC_MAX_SCRATCH_SIZE
++		free(scratch);
++#endif
+ 		return -EINVAL;
++	}
+ 
+ 	if (this->channels == 1) {
+ 		outputs[0] = (int32_t *)dst;
+-		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, 0);
++		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, scratch, 0);
+ 	} else {
+ 		outputs[0] = this->buf[0];
+ 		outputs[1] = this->buf[1];
+-		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, 0);
++		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, scratch, 0);
+ 		interleave_32_c2(dst, (const int32_t**)outputs, samples);
+ 	}
++#ifdef LC3PLUS_DEC_MAX_SCRATCH_SIZE
++	free(scratch);
++#endif
+ 	if (SPA_UNLIKELY(res != LC3PLUS_OK && res != LC3PLUS_DECODE_ERROR))
+ 		return -EINVAL;
+ 
