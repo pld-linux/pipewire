@@ -56,8 +56,7 @@ BuildRequires:	gstreamer-plugins-base-devel >= 1.23.1
 BuildRequires:	ldacBT-devel
 %{?with_lc3plus:BuildRequires:	libLC3plus-devel >= 1.4.1}
 %{?with_snap:BuildRequires:	libapparmor-devel}
-%ifarch i386 i486 %{armv4} %{armv5} %{armv6}
-# possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
+%ifnarch %arch_with_atomics64
 BuildRequires:	libatomic-devel
 %endif
 %{?with_libcamera:BuildRequires:	libcamera-devel >= 0.2.0}
@@ -85,7 +84,7 @@ BuildRequires:	python3-modules
 BuildRequires:	readline-devel >= 8.1.1-2
 %{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.3.0}
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 2.011
+BuildRequires:	rpmbuild(macros) >= 2.025
 BuildRequires:	sbc-devel
 %{?with_snap:BuildRequires:	snapd-glib-2-devel}
 BuildRequires:	systemd-devel
