@@ -1,7 +1,8 @@
 # TODO: evl support (BR: libevl-devel, https://evlproject.org/)
 #
 # Conditional build:
-%bcond_without	apidocs		# Doxygen based API documentation
+%bcond_with	apidocs		# Doxygen based API documentation
+%bcond_with	docs		# manual pages
 %bcond_without	ffado		# FFADO driver
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
@@ -11,17 +12,18 @@
 %bcond_without	libmysofa	# libmysofa filter chain support
 %bcond_without	lv2		# LV2 plugins support
 %bcond_without	roc		# ROC modules
+%bcond_without	snap		# Snap permissions support
 %bcond_without	x11		# X11 bell support
 #
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.0.7
+Version:	1.2.0
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	31cede8c6394ae41e3195175f08be598
+# Source0-md5:	5aa49aee429d3e23dc4844b26bd87d43
 Patch0:		%{name}-gcc.patch
 Patch1:		%{name}-lc3plus.patch
 URL:		https://pipewire.org/
@@ -34,7 +36,9 @@ BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
-BuildRequires:	doxygen
+%if %{with apidocs} || %{with docs}
+BuildRequires:	doxygen >= 1.9
+%endif
 BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
@@ -46,11 +50,12 @@ BuildRequires:	glib2-devel >= 1:2.32.0
 %{?with_apidocs:BuildRequires:	graphviz}
 %if %{with gstreamer}
 BuildRequires:	gstreamer-devel >= 1.10
-BuildRequires:	gstreamer-plugins-base-devel >= 1.10
+BuildRequires:	gstreamer-plugins-base-devel >= 1.23.1
 %endif
 %{?with_jack:BuildRequires:	jack-audio-connection-kit-devel >= 1.9.17}
 BuildRequires:	ldacBT-devel
 %{?with_lc3plus:BuildRequires:	libLC3plus-devel >= 1.4.1}
+%{?with_snap:BuildRequires:	libapparmor-devel}
 %ifarch i386 i486 %{armv4} %{armv5} %{armv6}
 # possibly more 32-bit archs (where 8-byte __atomic_store_n require libatomic)
 BuildRequires:	libatomic-devel
@@ -82,6 +87,7 @@ BuildRequires:	readline-devel >= 8.1.1-2
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.011
 BuildRequires:	sbc-devel
+%{?with_snap:BuildRequires:	snapd-glib-2-devel}
 BuildRequires:	systemd-devel
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing1-devel >= 1.2
@@ -359,7 +365,7 @@ Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	glib2 >= 1:2.32.0
 Requires:	gstreamer >= 1.10
-Requires:	gstreamer-plugins-base >= 1.10
+Requires:	gstreamer-plugins-base >= 1.23.1
 
 %description -n gstreamer-pipewire
 PipeWire video sink and source plugin for GStreamer.
@@ -379,17 +385,19 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	-Dbluez5-backend-native-mm=enabled \
 	%{!?with_lc3plus:-Dbluez5-codec-lc3plus=disabled} \
 	-Dcompress-offload=enabled \
-	%{?with_apidocs:-Ddocs=enabled} \
+	-Ddocs=%{__enabled_disabled apidocs} \
 	%{?with_ffmpeg:-Dffmpeg=enabled} \
 	%{!?with_gstreamer:-Dgstreamer=disabled} \
 	%{!?with_jack:-Djack=disabled} \
 	-Dlibcamera=%{__enabled_disabled libcamera} \
 	-Dlibffado=%{__enabled_disabled ffado} \
 	%{!?with_lv2:-Dlv2=disabled} \
-	-Dman=enabled \
+	-Dman=%{__enabled_disabled docs} \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
 	%{!?with_roc:-Droc=disabled} \
 	-Dsession-managers='[]' \
+	-Dsnap=%{__enabled_disabled snap} \
+	-Dudevrulesdir="%{_udevrulesdir}" \
 	-Dvideotestsrc=enabled \
 	-Dvolume=enabled \
 	-Dvulkan=enabled \
@@ -408,7 +416,7 @@ cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 
 # packaged as %doc in -apidocs
 %{?with_apidocs:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html}
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/libpipewire-module-example-*.7*
+%{?with_docs:%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/libpipewire-module-example-*.7*}
 
 %find_lang %{name}
 
@@ -440,6 +448,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-cat
 %attr(755,root,root) %{_bindir}/pw-cli
 %attr(755,root,root) %{_bindir}/pw-config
+%attr(755,root,root) %{_bindir}/pw-container
 %attr(755,root,root) %{_bindir}/pw-dot
 %attr(755,root,root) %{_bindir}/pw-dsdplay
 %attr(755,root,root) %{_bindir}/pw-dump
@@ -499,11 +508,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-loopback.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-driver.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-netjack2-manager.so
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-parametric-equalizer.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-pipe-tunnel.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-portal.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-profiler.so
-# R: dbus-libs systemd-libs
+# R: dbus-libs snapd-glib-2 systemd-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-pulse.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-protocol-simple.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-raop-discover.so
@@ -515,6 +525,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtp-source.so
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-rtkit.so
+# R: avahi-libs
+%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-snapcast-discover.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-device-factory.so
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-spa-node.so
@@ -541,6 +553,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/videotestsrc/libspa-videotestsrc.so
 %dir %{_libdir}/spa-0.2/volume
 %attr(755,root,root) %{_libdir}/spa-0.2/volume/libspa-volume.so
+%if %{with docs}
 %{_mandir}/man1/pipewire.1*
 %{_mandir}/man1/pw-cat.1*
 %{_mandir}/man1/pw-cli.1*
@@ -620,6 +633,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/pipewire-pulse-module-zeroconf-discover.7*
 %{_mandir}/man7/pipewire-pulse-module-zeroconf-publish.7*
 %{_mandir}/man7/pipewire-pulse-modules.7*
+%endif
 
 %files libs
 %defattr(644,root,root,755)
@@ -656,6 +670,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/pipewire/client.conf.avail
 %{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/spa-0.2
+%if %{with docs}
 %{_mandir}/man5/pipewire-client.conf.5*
 %{_mandir}/man7/libpipewire-module-adapter.7*
 %{_mandir}/man7/libpipewire-module-client-device.7*
@@ -664,6 +679,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-protocol-native.7*
 %{_mandir}/man7/libpipewire-module-rt.7*
 %{_mandir}/man7/libpipewire-module-session-manager.7*
+%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -686,7 +702,7 @@ rm -rf $RPM_BUILD_ROOT
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
 %{_datadir}/alsa-card-profile
-%{_mandir}/man1/spa-acp-tool.1*
+%{?with_docs:%{_mandir}/man1/spa-acp-tool.1*}
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
@@ -709,6 +725,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-ldac.so
 # R: opus
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-opus.so
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-opus-g.so
 # R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-sbc.so
 %dir %{_datadir}/spa-0.2/bluez5
@@ -746,7 +763,7 @@ rm -rf $RPM_BUILD_ROOT
 %files ffado
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-ffado-driver.so
-%{_mandir}/man7/libpipewire-module-ffado-driver.7*
+%{?with_docs:%{_mandir}/man7/libpipewire-module-ffado-driver.7*}
 %endif
 
 %if %{with lv2}
@@ -772,10 +789,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %{_datadir}/pipewire/jack.conf
+%if %{with docs}
 %{_mandir}/man1/pw-jack.1*
 %{_mandir}/man5/pipewire-jack.conf.5*
 %{_mandir}/man7/libpipewire-module-jack-tunnel.7.gz
 %{_mandir}/man7/libpipewire-module-jackdbus-detect.7.gz
+%endif
 %endif
 
 %files pulseaudio
@@ -786,9 +805,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/pipewire-pulse.conf
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
+%if %{with docs}
 %{_mandir}/man1/pipewire-pulse.1*
 %{_mandir}/man5/pipewire-pulse.conf.5*
 %{_mandir}/man7/libpipewire-module-pulse-tunnel.7*
+%endif
 
 %if %{with roc}
 %files roc
@@ -797,8 +818,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-sink.so
 # R: roc-toolkit
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-source.so
+%if %{with docs}
 %{_mandir}/man7/libpipewire-module-roc-sink.7*
 %{_mandir}/man7/libpipewire-module-roc-source.7*
+%endif
 %endif
 
 %files vulkan
@@ -811,7 +834,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 # R: libX11 libXfixes libcanberra
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-x11-bell.so
-%{_mandir}/man7/libpipewire-module-x11-bell.7*
+%{?with_docs:%{_mandir}/man7/libpipewire-module-x11-bell.7*}
 %endif
 
 %files -n alsa-plugin-pipewire
@@ -820,7 +843,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/alsa-lib/libasound_module_pcm_pipewire.so
 %{_datadir}/alsa/alsa.conf.d/50-pipewire.conf
 %{_datadir}/alsa/alsa.conf.d/99-pipewire-default.conf
-/lib/udev/rules.d/90-pipewire-alsa.rules
+%{_udevrulesdir}/90-pipewire-alsa.rules
 
 %if %{with gstreamer}
 %files -n gstreamer-pipewire
