@@ -2,7 +2,7 @@
 #
 # Conditional build:
 %bcond_with	apidocs		# Doxygen based API documentation
-%bcond_with	docs		# manual pages
+%bcond_with	man		# manual pages
 %bcond_without	ffado		# FFADO driver
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
@@ -36,8 +36,11 @@ BuildRequires:	alsa-lib-devel >= 1.1.7
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
-%if %{with apidocs} || %{with docs}
-BuildRequires:	doxygen >= 1.9
+%if %{with man}
+BuildRequires:	doxygen >= 1:1.8.10
+%endif
+%if %{with apidocs}
+BuildRequires:	doxygen >= 1:1.9
 %endif
 BuildRequires:	fdk-aac-devel
 # libavcodec libavformat libavfilter
@@ -377,6 +380,10 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %patch0 -p1
 %patch1 -p1
 
+%if %{with man} && %{without apidocs}
+%{__sed} -i -e '/doxygen = / s/>=1\.9/>=1.8.10/' meson.build
+%endif
+
 %build
 %meson build \
 	-Daudiotestsrc=enabled \
@@ -391,7 +398,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	-Dlibcamera=%{__enabled_disabled libcamera} \
 	-Dlibffado=%{__enabled_disabled ffado} \
 	%{!?with_lv2:-Dlv2=disabled} \
-	-Dman=%{__enabled_disabled docs} \
+	-Dman=%{__enabled_disabled man} \
 	%{!?with_jack:-Dpipewire-jack=disabled} \
 	%{!?with_roc:-Droc=disabled} \
 	-Dsession-managers='[]' \
@@ -413,9 +420,13 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/pipewire,%{_datadir}/alsa/alsa.conf.d}
 cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
 
+%if %{with apidocs}
 # packaged as %doc in -apidocs
-%{?with_apidocs:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html}
-%{?with_docs:%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/libpipewire-module-example-*.7*}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pipewire/html
+%endif
+%if %{with man}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/libpipewire-module-example-*.7*
+%endif
 
 %find_lang %{name}
 
@@ -552,11 +563,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/videotestsrc/libspa-videotestsrc.so
 %dir %{_libdir}/spa-0.2/volume
 %attr(755,root,root) %{_libdir}/spa-0.2/volume/libspa-volume.so
-%if %{with docs}
+%if %{with man}
 %{_mandir}/man1/pipewire.1*
 %{_mandir}/man1/pw-cat.1*
 %{_mandir}/man1/pw-cli.1*
 %{_mandir}/man1/pw-config.1*
+%{_mandir}/man1/pw-container.1*
 %{_mandir}/man1/pw-dot.1*
 %{_mandir}/man1/pw-dump.1*
 %{_mandir}/man1/pw-link.1*
@@ -584,6 +596,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-loopback.7*
 %{_mandir}/man7/libpipewire-module-netjack2-driver.7*
 %{_mandir}/man7/libpipewire-module-netjack2-manager.7*
+%{_mandir}/man7/libpipewire-module-parametric-equalizer.7*
 %{_mandir}/man7/libpipewire-module-pipe-tunnel.7*
 %{_mandir}/man7/libpipewire-module-portal.7*
 %{_mandir}/man7/libpipewire-module-profiler.7*
@@ -595,15 +608,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-rtp-session.7*
 %{_mandir}/man7/libpipewire-module-rtp-sink.7*
 %{_mandir}/man7/libpipewire-module-rtp-source.7*
+%{_mandir}/man7/libpipewire-module-snapcast-discover.7*
 %{_mandir}/man7/libpipewire-module-vban-recv.7*
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
 %{_mandir}/man7/libpipewire-modules.7*
 %{_mandir}/man7/pipewire-devices.7*
+# pipewire-pulse-module-* mans refer to libpipewire-module-protocol-pulse
 %{_mandir}/man7/pipewire-pulse-module-alsa-sink.7*
 %{_mandir}/man7/pipewire-pulse-module-alsa-source.7*
 %{_mandir}/man7/pipewire-pulse-module-always-sink.7*
 %{_mandir}/man7/pipewire-pulse-module-combine-sink.7*
+%{_mandir}/man7/pipewire-pulse-module-device-manager.7*
+%{_mandir}/man7/pipewire-pulse-module-device-restore.7*
 %{_mandir}/man7/pipewire-pulse-module-echo-cancel.7*
 %{_mandir}/man7/pipewire-pulse-module-gsettings.7*
 %{_mandir}/man7/pipewire-pulse-module-jackdbus-detect.7*
@@ -623,6 +640,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/pipewire-pulse-module-rtp-recv.7*
 %{_mandir}/man7/pipewire-pulse-module-rtp-send.7*
 %{_mandir}/man7/pipewire-pulse-module-simple-protocol-tcp.7*
+%{_mandir}/man7/pipewire-pulse-module-stream-restore.7*
 %{_mandir}/man7/pipewire-pulse-module-switch-on-connect.7*
 %{_mandir}/man7/pipewire-pulse-module-tunnel-sink.7*
 %{_mandir}/man7/pipewire-pulse-module-tunnel-source.7*
@@ -669,7 +687,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/pipewire/client.conf.avail
 %{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/spa-0.2
-%if %{with docs}
+%if %{with man}
 %{_mandir}/man5/pipewire-client.conf.5*
 %{_mandir}/man7/libpipewire-module-adapter.7*
 %{_mandir}/man7/libpipewire-module-client-device.7*
@@ -701,7 +719,9 @@ rm -rf $RPM_BUILD_ROOT
 # R: alsa-lib udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/alsa/libspa-alsa.so
 %{_datadir}/alsa-card-profile
-%{?with_docs:%{_mandir}/man1/spa-acp-tool.1*}
+%if %{with man}
+%{_mandir}/man1/spa-acp-tool.1*
+%endif
 
 %files spa-module-bluez
 %defattr(644,root,root,755)
@@ -762,7 +782,9 @@ rm -rf $RPM_BUILD_ROOT
 %files ffado
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-ffado-driver.so
-%{?with_docs:%{_mandir}/man7/libpipewire-module-ffado-driver.7*}
+%if %{with man}
+%{_mandir}/man7/libpipewire-module-ffado-driver.7*
+%endif
 %endif
 
 %if %{with lv2}
@@ -788,7 +810,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjacknet.so*
 %attr(755,root,root) %{_libdir}/pipewire-0.3/jack/libjackserver.so*
 %{_datadir}/pipewire/jack.conf
-%if %{with docs}
+%if %{with man}
 %{_mandir}/man1/pw-jack.1*
 %{_mandir}/man5/pipewire-jack.conf.5*
 %{_mandir}/man7/libpipewire-module-jack-tunnel.7.gz
@@ -804,7 +826,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/pipewire-pulse.conf
 %{systemduserunitdir}/pipewire-pulse.service
 %{systemduserunitdir}/pipewire-pulse.socket
-%if %{with docs}
+%if %{with man}
 %{_mandir}/man1/pipewire-pulse.1*
 %{_mandir}/man5/pipewire-pulse.conf.5*
 %{_mandir}/man7/libpipewire-module-pulse-tunnel.7*
@@ -817,7 +839,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-sink.so
 # R: roc-toolkit
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-roc-source.so
-%if %{with docs}
+%if %{with man}
 %{_mandir}/man7/libpipewire-module-roc-sink.7*
 %{_mandir}/man7/libpipewire-module-roc-source.7*
 %endif
@@ -833,7 +855,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 # R: libX11 libXfixes libcanberra
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-x11-bell.so
-%{?with_docs:%{_mandir}/man7/libpipewire-module-x11-bell.7*}
+%if %{with man}
+%{_mandir}/man7/libpipewire-module-x11-bell.7*
+%endif
 %endif
 
 %files -n alsa-plugin-pipewire
