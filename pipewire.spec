@@ -2,7 +2,7 @@
 #
 # Conditional build:
 %bcond_with	apidocs		# Doxygen based API documentation
-%bcond_with	man		# manual pages
+%bcond_without	man		# manual pages
 %bcond_without	ffado		# FFADO driver
 %bcond_without	ffmpeg		# ffmpeg spa plugin integration
 %bcond_without	gstreamer	# GStreamer module
@@ -19,7 +19,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	1.2.2
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
