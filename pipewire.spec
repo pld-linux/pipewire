@@ -18,12 +18,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.2.5
+Version:	1.2.6
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	61f8d627b740e04c8234da6870799673
+# Source0-md5:	764218c1548250a77221809b7a22f13d
 Patch0:		%{name}-gcc.patch
 Patch1:		%{name}-lc3plus.patch
 URL:		https://pipewire.org/
@@ -613,7 +613,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
 %{_mandir}/man7/libpipewire-modules.7*
-%{_mandir}/man7/pipewire-devices.7*
+%{_mandir}/man7/pipewire-props.7*
 # pipewire-pulse-module-* mans refer to libpipewire-module-protocol-pulse
 %{_mandir}/man7/pipewire-pulse-module-alsa-sink.7*
 %{_mandir}/man7/pipewire-pulse-module-alsa-source.7*
