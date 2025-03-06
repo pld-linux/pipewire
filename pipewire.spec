@@ -18,12 +18,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.2.7
+Version:	1.4.0
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	244a64d8873a868d102b2dd02c964906
+# Source0-md5:	f5c9f60f9f7d24c4511f1c25e714a6b7
 Patch0:		%{name}-gcc.patch
 Patch1:		%{name}-lc3plus.patch
 URL:		https://pipewire.org/
@@ -32,7 +32,7 @@ BuildRequires:	ModemManager-devel >= 1.10.0
 BuildRequires:	SDL2-devel >= 2
 %endif
 BuildRequires:	Vulkan-Loader-devel >= 1.2.170
-BuildRequires:	alsa-lib-devel >= 1.1.7
+BuildRequires:	alsa-lib-devel >= 1.2.10
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
@@ -43,8 +43,9 @@ BuildRequires:	doxygen >= 1:1.8.10
 BuildRequires:	doxygen >= 1:1.9
 %endif
 BuildRequires:	fdk-aac-devel
-# libavcodec libavformat libavfilter
+# libavcodec libavformat libavfilter libswscale
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
+BuildRequires:	fftw3-single-devel
 BuildRequires:	gcc >= 6:4.9
 BuildRequires:	gettext-tools
 %if %{with gstreamer}
@@ -66,6 +67,7 @@ BuildRequires:	libatomic-devel
 %{?with_x11:BuildRequires:	libcanberra-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libdrm-devel >= 2.4.98
+BuildRequires:	libebur128-devel
 %{?with_ffado:BuildRequires:	libffado-devel}
 BuildRequires:	libfreeaptx-devel
 BuildRequires:	liblc3-devel
@@ -85,7 +87,7 @@ BuildRequires:	pulseaudio-devel
 BuildRequires:	python3
 BuildRequires:	python3-modules
 BuildRequires:	readline-devel >= 8.1.1-2
-%{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.3.0}
+%{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.4.0}
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.042
 BuildRequires:	sbc-devel
@@ -170,7 +172,7 @@ Summary:	PipeWire SPA plugin to play and record audio with ALSA API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API ALSA
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	alsa-lib >= 1.1.7
+Requires:	alsa-lib >= 1.2.10
 
 %description spa-module-alsa
 PipeWire SPA plugin to play and record audio with ALSA API.
@@ -204,6 +206,34 @@ PipeWire SPA plugin to decode/encode with FFmpeg library.
 %description spa-module-ffmpeg -l pl.UTF-8
 Wtyczka PipeWire SPA do kodowania/dekodowania przy użyciu biblioteki
 FFmpeg.
+
+%package spa-module-filter-graph-lv2
+Summary:	PipeWire LV2 filter graph plugin
+Summary(pl.UTF-8):	Plugin grafu filtrów bazujący na LV2 dla PipeWire
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Provides:	pipewire-filter-chain-lv2 = %{version}-%{release}
+Obsoletes:	pipewire-filter-chain-lv2 < 1.4.0
+
+%description spa-module-filter-graph-lv2
+PipeWire LV2 filter graph plugin.
+
+%description spa-module-filter-graph-lv2 -l pl.UTF-8
+Plugin grafu filtrów bazujących na LV2 dla PipeWire.
+
+%package spa-module-filter-graph-sofa
+Summary:	PipeWire libmysofa filter graph plugin
+Summary(pl.UTF-8):	Plugin grafu filtrów bazujący na libmysofa dla PipeWire
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Provides:	pipewire-filter-chain-sofa = %{version}-%{release}
+Obsoletes:	pipewire-filter-chain-sofa < 1.4.0
+
+%description spa-module-filter-graph-sofa
+PipeWire libmysofa filter graph plugin.
+
+%description spa-module-filter-graph-sofa -l pl.UTF-8
+Plugin grafu filtrów bazujący na libmysofa dla PipeWire.
 
 %package spa-module-jack
 Summary:	PipeWire SPA plugin to play and record audio with JACK API
@@ -244,30 +274,6 @@ PipeWire SPA plugin to generate video frames using Vulkan.
 
 %description spa-module-vulkan -l pl.UTF-8
 Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana.
-
-%package filter-chain-lv2
-Summary:	PipeWire LV2 filter chain
-Summary(pl.UTF-8):	Łańcuch filtrów bazujących na LV2 dla PipeWire
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description filter-chain-lv2
-PipeWire LV2 filter chain.
-
-%description filter-chain-lv2 -l pl.UTF-8
-Łańcuch filtrów bazujących na LV2 dla PipeWire.
-
-%package filter-chain-sofa
-Summary:	PipeWire libmysofa filter chain
-Summary(pl.UTF-8):	Łańcuch filtrów bazujących na libmysofa dla PipeWire
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description filter-chain-sofa
-PipeWire libmysofa filter chain.
-
-%description filter-chain-sofa -l pl.UTF-8
-Łańcuch filtrów bazujących na libmysofa dla PipeWire.
 
 %package jack
 Summary:	PipeWire JACK sound system integration
@@ -495,6 +501,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/filter-chain/sink-make-LFE.conf
 %{_datadir}/pipewire/filter-chain/sink-matrix-spatialiser.conf
 %{_datadir}/pipewire/filter-chain/sink-mix-FL-FR.conf
+%{_datadir}/pipewire/filter-chain/sink-upmix-5.1-filter.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-5.1-kemar.conf
 %{_datadir}/pipewire/filter-chain/sink-virtual-surround-7.1-hesuvi.conf
 %{_datadir}/pipewire/filter-chain/source-duplicate-FL.conf
@@ -554,6 +561,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/audiotestsrc/libspa-audiotestsrc.so
 %dir %{_libdir}/spa-0.2/avb
 %attr(755,root,root) %{_libdir}/spa-0.2/avb/libspa-avb.so
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-builtin.so
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-ebur128.so
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-ladspa.so
 %dir %{_libdir}/spa-0.2/v4l2
 # R: udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/v4l2/libspa-v4l2.so
@@ -609,6 +619,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/libpipewire-module-rtp-sink.7*
 %{_mandir}/man7/libpipewire-module-rtp-source.7*
 %{_mandir}/man7/libpipewire-module-snapcast-discover.7*
+%{_mandir}/man7/libpipewire-module-spa-device.7*
+%{_mandir}/man7/libpipewire-module-spa-device-factory.7*
+%{_mandir}/man7/libpipewire-module-spa-node.7*
+%{_mandir}/man7/libpipewire-module-spa-node-factory.7*
 %{_mandir}/man7/libpipewire-module-vban-recv.7*
 %{_mandir}/man7/libpipewire-module-vban-send.7*
 %{_mandir}/man7/libpipewire-module-zeroconf-discover.7*
@@ -668,12 +682,15 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-session-manager.so
 %dir %{_libdir}/pipewire-0.3/v4l2
 %dir %{_libdir}/spa-0.2
+%attr(755,root,root) %{_libdir}/spa-0.2/libspa.so
 %dir %{_libdir}/spa-0.2/audioconvert
 %attr(755,root,root) %{_libdir}/spa-0.2/audioconvert/libspa-audioconvert.so
 %dir %{_libdir}/spa-0.2/audiomixer
 %attr(755,root,root) %{_libdir}/spa-0.2/audiomixer/libspa-audiomixer.so
 %dir %{_libdir}/spa-0.2/control
 %attr(755,root,root) %{_libdir}/spa-0.2/control/libspa-control.so
+%dir %{_libdir}/spa-0.2/filter-graph
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph.so
 %dir %{_libdir}/spa-0.2/support
 # R: dbus-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-dbus.so
@@ -681,9 +698,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
 %{_datadir}/pipewire/client.conf
-%{_datadir}/pipewire/client-rt.conf
-%dir %{_datadir}/pipewire/client-rt.conf.avail
-%{_datadir}/pipewire/client-rt.conf.avail/20-upmix.conf
 %dir %{_datadir}/pipewire/client.conf.avail
 %{_datadir}/pipewire/client.conf.avail/20-upmix.conf
 %dir %{_datadir}/spa-0.2
@@ -734,6 +748,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-aptx.so
 # R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-g722.so
 # R: liblc3
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-lc3.so
 %if %{with lc3plus}
@@ -755,6 +770,18 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/ffmpeg
 # R: ffmpeg-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/ffmpeg/libspa-ffmpeg.so
+
+%if %{with lv2}
+%files spa-module-filter-graph-lv2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-lv2.so
+%endif
+
+%if %{with libmysofa}
+%files spa-module-filter-graph-sofa
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-sofa.so
+%endif
 
 %if %{with jack}
 %files spa-module-jack
@@ -785,18 +812,6 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with man}
 %{_mandir}/man7/libpipewire-module-ffado-driver.7*
 %endif
-%endif
-
-%if %{with lv2}
-%files filter-chain-lv2
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain-lv2.so
-%endif
-
-%if %{with libmysofa}
-%files filter-chain-sofa
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/pipewire-0.3/libpipewire-module-filter-chain-sofa.so
 %endif
 
 %if %{with jack}
