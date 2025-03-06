@@ -377,8 +377,8 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 %if %{with man} && %{without apidocs}
 %{__sed} -i -e '/doxygen = / s/>=1\.9/>=1.8.10/' meson.build
