@@ -87,7 +87,7 @@ BuildRequires:	python3-modules
 BuildRequires:	readline-devel >= 8.1.1-2
 %{?with_roc:BuildRequires:	roc-toolkit-devel >= 0.3.0}
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 2.025
+BuildRequires:	rpmbuild(macros) >= 2.042
 BuildRequires:	sbc-devel
 %{?with_snap:BuildRequires:	snapd-glib-2-devel}
 BuildRequires:	systemd-devel
@@ -385,7 +385,7 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %endif
 
 %build
-%meson build \
+%meson \
 	-Daudiotestsrc=enabled \
 	-Dbluez5-backend-hsphfpd=enabled \
 	-Dbluez5-backend-native-mm=enabled \
@@ -410,12 +410,12 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 	-Dx11=%{__enabled_disabled x11}
 # TODO: -Devl=enabled
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%ninja_install -C build
+%meson_install
 
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/pipewire,%{_datadir}/alsa/alsa.conf.d}
 cp -p pipewire-alsa/conf/*.conf $RPM_BUILD_ROOT%{_datadir}/alsa/alsa.conf.d
