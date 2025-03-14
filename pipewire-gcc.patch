@@ -2,13 +2,13 @@ AVX code uses _mm256_setr_m128i() which requires gcc 8
 --- pipewire-0.3.24/meson.build.orig	2021-04-03 20:16:48.559894581 +0200
 +++ pipewire-0.3.24/meson.build	2021-04-03 20:17:56.916756919 +0200
 @@ -110,8 +110,8 @@
- have_ssse3 = cc.has_argument(ssse3_args)
- have_sse41 = cc.has_argument(sse41_args)
- have_fma = cc.has_argument(fma_args)
--have_avx = cc.has_argument(avx_args)
--have_avx2 = cc.has_argument(avx2_args)
-+have_avx = cc.has_argument(avx_args) and not ((cc.get_id() == 'gcc') and cc.version().version_compare('< 8'))
-+have_avx2 = cc.has_argument(avx2_args) and not ((cc.get_id() == 'gcc') and cc.version().version_compare('< 8'))
+   have_ssse3 = cc.has_argument(ssse3_args)
+   have_sse41 = cc.has_argument(sse41_args)
+   have_fma = cc.has_argument(fma_args)
+-  have_avx = cc.has_argument(avx_args)
+-  have_avx2 = cc.has_argument(avx2_args)
++  have_avx = cc.has_argument(avx_args) and not ((cc.get_id() == 'gcc') and cc.version().version_compare('< 8'))
++  have_avx2 = cc.has_argument(avx2_args) and not ((cc.get_id() == 'gcc') and cc.version().version_compare('< 8'))
+ endif
  
  have_neon = false
- if host_machine.cpu_family() == 'aarch64'
