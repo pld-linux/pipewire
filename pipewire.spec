@@ -19,7 +19,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	1.4.2
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
@@ -488,7 +488,6 @@ rm -rf $RPM_BUILD_ROOT
 # R: libsndfile
 %attr(755,root,root) %{_bindir}/spa-resample
 %dir %{_sysconfdir}/pipewire
-%dir %{_datadir}/pipewire
 %{_datadir}/pipewire/filter-chain.conf
 %{_datadir}/pipewire/minimal.conf
 %{_datadir}/pipewire/pipewire.conf
@@ -697,6 +696,7 @@ rm -rf $RPM_BUILD_ROOT
 # R: systemd-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-journal.so
 %attr(755,root,root) %{_libdir}/spa-0.2/support/libspa-support.so
+%dir %{_datadir}/pipewire
 %{_datadir}/pipewire/client.conf
 %dir %{_datadir}/pipewire/client.conf.avail
 %{_datadir}/pipewire/client.conf.avail/20-upmix.conf
