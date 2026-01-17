@@ -100,13 +100,13 @@ BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXfixes-devel >= 6
 %endif
 Requires(post,preun):	systemd-units >= 1:250.1
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	libsndfile >= 1.0.20
-Requires:	opus >= 0.9.7
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+Requires:	libsndfile%{?_isa} >= 1.0.20
+Requires:	opus%{?_isa} >= 0.9.7
 Requires:	pipewire-session-manager
 Requires:	systemd-units >= 1:250.1
-%{?with_lv2:Suggests:	%{name}-filter-chain-lv2 = %{version}-%{release}}
-%{?with_libmysofa:Suggests:	%{name}-filter-chain-sofa = %{version}-%{release}}
+%{?with_lv2:Suggests:	%{name}-spa-module-filter-graph-lv2%{?_isa} = %{version}-%{release}}
+%{?with_libmysofa:Suggests:	%{name}-spa-module-filter-graph-sofa%{?_isa} = %{version}-%{release}}
 Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -147,7 +147,7 @@ Biblioteka współdzielona PipeWire.
 Summary:	Header files for PipeWire library and Simple Plugin API
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki PipeWire oraz Simple Plugin API
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
 %description devel
 Header files for PipeWire library and Simple Plugin API.
@@ -171,8 +171,8 @@ Dokumentacja API biblioteki PipeWire.
 Summary:	PipeWire SPA plugin to play and record audio with ALSA API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API ALSA
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	alsa-lib >= 1.2.10
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+Requires:	alsa-lib%{?_isa} >= 1.2.10
 
 %description spa-module-alsa
 PipeWire SPA plugin to play and record audio with ALSA API.
@@ -185,8 +185,8 @@ API ALSA.
 Summary:	PipeWire SPA plugin to play audio with Bluetooth A2DP
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania dźwięku przez Bluetooth A2DP
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	bluez-libs >= 4.101
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+Requires:	bluez-libs%{?_isa} >= 4.101
 
 %description spa-module-bluez
 PipeWire SPA plugin to play audio with Bluetooth A2DP.
@@ -198,7 +198,7 @@ Wtyczka PipeWire SPA do odtwarzania dźwięku przez Bluetooth A2DP.
 Summary:	PipeWire SPA plugin to decode/encode with FFmpeg library
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do kodowania/dekodowania przy użyciu biblioteki FFmpeg
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
 %description spa-module-ffmpeg
 PipeWire SPA plugin to decode/encode with FFmpeg library.
@@ -211,8 +211,9 @@ FFmpeg.
 Summary:	PipeWire LV2 filter graph plugin
 Summary(pl.UTF-8):	Plugin grafu filtrów bazujący na LV2 dla PipeWire
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 Provides:	pipewire-filter-chain-lv2 = %{version}-%{release}
+Provides:	pipewire-filter-chain-lv2%{?_isa} = %{version}-%{release}
 Obsoletes:	pipewire-filter-chain-lv2 < 1.4.0
 
 %description spa-module-filter-graph-lv2
@@ -225,8 +226,9 @@ Plugin grafu filtrów bazujących na LV2 dla PipeWire.
 Summary:	PipeWire libmysofa filter graph plugin
 Summary(pl.UTF-8):	Plugin grafu filtrów bazujący na libmysofa dla PipeWire
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 Provides:	pipewire-filter-chain-sofa = %{version}-%{release}
+Provides:	pipewire-filter-chain-sofa%{?_isa} = %{version}-%{release}
 Obsoletes:	pipewire-filter-chain-sofa < 1.4.0
 
 %description spa-module-filter-graph-sofa
@@ -239,7 +241,7 @@ Plugin grafu filtrów bazujący na libmysofa dla PipeWire.
 Summary:	PipeWire SPA plugin to play and record audio with JACK API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API JACK
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 Requires:	jack-audio-connection-kit >= 1.9.17
 
 %description spa-module-jack
@@ -253,8 +255,8 @@ API JACK.
 Summary:	PipeWire SPA plugin to access cameras through libcamera
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do dostępu do kamer przez libcamera
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	libcamera >= 0.2.0
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+Requires:	libcamera%{?_isa} >= 0.2.0
 
 %description spa-module-libcamera
 PipeWire SPA plugin to access cameras through libcamera.
@@ -266,8 +268,8 @@ Wtyczka PipeWire SPA do dostępu do kamer przez libcamera.
 Summary:	PipeWire SPA plugin to generate video frames using Vulkan
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	Vulkan-Loader >= 1.2.170
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+Requires:	Vulkan-Loader%{?_isa} >= 1.2.170
 
 %description spa-module-vulkan
 PipeWire SPA plugin to generate video frames using Vulkan.
@@ -279,7 +281,7 @@ Wtyczka PipeWire SPA do generowania ramek obrazu przy użyciu Vulkana.
 Summary:	PipeWire JACK sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku JACK
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	jack-audio-connection-kit >= 1.9.17
 
 %description jack
@@ -292,7 +294,7 @@ Integracja PipeWire z systemem dźwięku JACK.
 Summary:	PipeWire FFADO integration
 Summary(pl.UTF-8):	Integracja PipeWire z FFADO
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description ffado
 PipeWire FFADO (Free FireWire Audio Drivers) integration.
@@ -305,7 +307,7 @@ Summary:	PipeWire PulseAudio sound system integration
 Summary(pl.UTF-8):	Integracja PipeWire z systemem dźwięku PulseAudio
 Group:		Libraries
 Requires(post,preun):	systemd-units >= 1:250.1
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	systemd-units >= 1:250.1
 Suggests:	pulseaudio-tools
 
@@ -319,7 +321,7 @@ Integracja PipeWire z systemem dźwięku PulseAudio.
 Summary:	PipeWire ROC streaming integration
 Summary(pl.UTF-8):	Integracja PipeWire ze strumieniami ROC
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description roc
 PipeWire ROC streaming integration.
@@ -331,8 +333,8 @@ Integracja PipeWire ze strumieniami ROC.
 Summary:	PipeWire Vulkan integration
 Summary(pl.UTF-8):	Integracja PipeWire z Vulkanem
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-spa-module-vulkan
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	%{name}-spa-module-vulkan%{?_isa}
 
 %description vulkan
 PipeWire Vulkan integration.
@@ -344,8 +346,8 @@ Integracja PipeWire z Vulkanem.
 Summary:	PipeWire module for X11 bell support
 Summary(pl.UTF-8):	Moduł PipeWire do obsługi dzwonka X11
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	xorg-lib-libXfixes >= 6
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	xorg-lib-libXfixes%{?_isa} >= 6
 
 %description x11-bell
 PipeWire module for X11 bell support.
@@ -358,7 +360,7 @@ Summary:	PipeWire integration plugin for ALSA sound system
 Summary(pl.UTF-8):	Wtyczka systemu dźwięku ALSA integrująca z PipeWire
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	alsa-lib >= 1.1.7
+Requires:	alsa-lib%{?_isa} >= 1.1.7
 
 %description -n alsa-plugin-pipewire
 PipeWire integration plugin for ALSA sound system.
@@ -371,9 +373,9 @@ Summary:	PipeWire video sink and source plugin for GStreamer
 Summary(pl.UTF-8):	Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	glib2 >= 1:2.32.0
-Requires:	gstreamer >= 1.10
-Requires:	gstreamer-plugins-base >= 1.23.1
+Requires:	glib2%{?_isa} >= 1:2.32.0
+Requires:	gstreamer%{?_isa} >= 1.10
+Requires:	gstreamer-plugins-base%{?_isa} >= 1.23.1
 
 %description -n gstreamer-pipewire
 PipeWire video sink and source plugin for GStreamer.
