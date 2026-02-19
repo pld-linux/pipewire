@@ -768,11 +768,13 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/spa-0.2/bluez5
 %{_datadir}/spa-0.2/bluez5/bluez-hardware.conf
 
+%if %{with ffmpeg}
 %files spa-module-ffmpeg
 %defattr(644,root,root,755)
 %dir %{_libdir}/spa-0.2/ffmpeg
 # R: ffmpeg-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/ffmpeg/libspa-ffmpeg.so
+%endif
 
 %if %{with lv2}
 %files spa-module-filter-graph-lv2
