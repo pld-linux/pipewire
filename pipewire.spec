@@ -4,7 +4,7 @@
 %bcond_with	apidocs		# Doxygen based API documentation
 %bcond_without	man		# manual pages
 %bcond_without	ffado		# FFADO driver
-%bcond_without	ffmpeg		# ffmpeg spa plugin integration
+%bcond_without	ffmpeg		# ffmpeg filter graph and spa plugins
 %bcond_without	gstreamer	# GStreamer module
 %bcond_without	jack		# pipewire-jack and jack spa plugin integration
 %bcond_with	lc3plus		# Bluez lc3plus codec
@@ -18,12 +18,12 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.4.10
+Version:	1.6.0
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	d607b900a046237d3549e0a0ac22366f
+# Source0-md5:	97934b344b5517d6f83c6bc1314833e0
 Patch0:		%{name}-gcc.patch
 Patch1:		%{name}-lc3plus.patch
 URL:		https://pipewire.org/
@@ -32,7 +32,7 @@ BuildRequires:	ModemManager-devel >= 1.10.0
 BuildRequires:	SDL2-devel >= 2
 %endif
 BuildRequires:	Vulkan-Loader-devel >= 1.2.170
-BuildRequires:	alsa-lib-devel >= 1.2.10
+BuildRequires:	alsa-lib-devel >= 1.2.11
 BuildRequires:	avahi-devel
 BuildRequires:	bluez-libs-devel >= 4.101
 BuildRequires:	dbus-devel
@@ -43,7 +43,7 @@ BuildRequires:	doxygen >= 1:1.8.10
 BuildRequires:	doxygen >= 1:1.9
 %endif
 BuildRequires:	fdk-aac-devel
-# libavcodec libavformat libavfilter libswscale
+# libavcodec libavformat libavfilter libavutil libswscale
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fftw3-single-devel
 BuildRequires:	gcc >= 6:4.9
@@ -65,7 +65,6 @@ BuildRequires:	libatomic-devel
 %endif
 %{?with_libcamera:BuildRequires:	libcamera-devel >= 0.2.0}
 %{?with_x11:BuildRequires:	libcanberra-devel}
-BuildRequires:	libcap-devel
 BuildRequires:	libdrm-devel >= 2.4.98
 BuildRequires:	libebur128-devel
 %{?with_ffado:BuildRequires:	libffado-devel}
@@ -74,7 +73,7 @@ BuildRequires:	liblc3-devel
 %{?with_libmysofa:BuildRequires:	libmysofa-devel}
 BuildRequires:	libselinux-devel
 BuildRequires:	libsndfile-devel >= 1.0.20
-BuildRequires:	libstdc++-devel >= 6:7
+BuildRequires:	libstdc++-devel >= 6:10
 BuildRequires:	libusb-devel >= 1.0
 %{?with_lv2:BuildRequires:	lilv-devel}
 BuildRequires:	meson >= 0.61.1
@@ -92,7 +91,8 @@ BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.042
 BuildRequires:	sbc-devel
 %{?with_snap:BuildRequires:	snapd-glib-2-devel}
-BuildRequires:	systemd-devel
+BuildRequires:	spandsp-devel
+BuildRequires:	systemd-devel >= 1:209
 BuildRequires:	udev-devel
 BuildRequires:	webrtc-audio-processing1-devel >= 1.2
 %if %{with x11}
@@ -105,6 +105,7 @@ Requires:	libsndfile%{?_isa} >= 1.0.20
 Requires:	opus%{?_isa} >= 0.9.7
 Requires:	pipewire-session-manager
 Requires:	systemd-units >= 1:250.1
+%{?with_ffmpeg:Suggests:	%{name}-spa-module-filter-graph-ffmpeg%{?_isa} = %{version}-%{release}}
 %{?with_lv2:Suggests:	%{name}-spa-module-filter-graph-lv2%{?_isa} = %{version}-%{release}}
 %{?with_libmysofa:Suggests:	%{name}-spa-module-filter-graph-sofa%{?_isa} = %{version}-%{release}}
 Suggests:	rtkit
@@ -172,7 +173,7 @@ Summary:	PipeWire SPA plugin to play and record audio with ALSA API
 Summary(pl.UTF-8):	Wtyczka PipeWire SPA do odtwarzania i nagrywania dźwięku przy użyciu API ALSA
 Group:		Libraries
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
-Requires:	alsa-lib%{?_isa} >= 1.2.10
+Requires:	alsa-lib%{?_isa} >= 1.2.11
 
 %description spa-module-alsa
 PipeWire SPA plugin to play and record audio with ALSA API.
@@ -206,6 +207,18 @@ PipeWire SPA plugin to decode/encode with FFmpeg library.
 %description spa-module-ffmpeg -l pl.UTF-8
 Wtyczka PipeWire SPA do kodowania/dekodowania przy użyciu biblioteki
 FFmpeg.
+
+%package spa-module-filter-graph-ffmpeg
+Summary:	PipeWire FFmpeg filter graph plugin
+Summary(pl.UTF-8):	Plugin grafu filtrów bazujący na FFmpeg dla PipeWire
+Group:		Libraries
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+
+%description spa-module-filter-graph-ffmpeg
+PipeWire FFmpeg filter graph plugin.
+
+%description spa-module-filter-graph-ffmpeg -l pl.UTF-8
+Plugin grafu filtrów bazujących na FFmpeg dla PipeWire.
 
 %package spa-module-filter-graph-lv2
 Summary:	PipeWire LV2 filter graph plugin
@@ -474,6 +487,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-link
 %attr(755,root,root) %{_bindir}/pw-loopback
 %attr(755,root,root) %{_bindir}/pw-metadata
+%attr(755,root,root) %{_bindir}/pw-midi2play
+%attr(755,root,root) %{_bindir}/pw-midi2record
 %attr(755,root,root) %{_bindir}/pw-mididump
 %attr(755,root,root) %{_bindir}/pw-midiplay
 %attr(755,root,root) %{_bindir}/pw-midirecord
@@ -482,6 +497,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pw-profiler
 %attr(755,root,root) %{_bindir}/pw-record
 %attr(755,root,root) %{_bindir}/pw-reserve
+%attr(755,root,root) %{_bindir}/pw-sysex
 %attr(755,root,root) %{_bindir}/pw-top
 %attr(755,root,root) %{_bindir}/pw-v4l2
 %attr(755,root,root) %{_bindir}/spa-inspect
@@ -497,6 +513,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pipewire/pipewire-avb.conf
 %dir %{_datadir}/pipewire/filter-chain
 %{_datadir}/pipewire/filter-chain/demonic.conf
+%{_datadir}/pipewire/filter-chain/sink-dolby-pro-logic-ii.conf
 %{_datadir}/pipewire/filter-chain/sink-dolby-surround.conf
 %{_datadir}/pipewire/filter-chain/sink-eq6.conf
 %{_datadir}/pipewire/filter-chain/sink-make-LFE.conf
@@ -752,6 +769,12 @@ rm -rf $RPM_BUILD_ROOT
 # R: sbc
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-faststream.so
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-g722.so
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-hfp-cvsd.so
+# R: liblc3
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-hfp-lc3-a127.so
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-hfp-lc3-swb.so
+# R: libsbc
+%attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-hfp-msbc.so
 # R: liblc3
 %attr(755,root,root) %{_libdir}/spa-0.2/bluez5/libspa-codec-bluez5-lc3.so
 %if %{with lc3plus}
@@ -774,6 +797,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/ffmpeg
 # R: ffmpeg-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/ffmpeg/libspa-ffmpeg.so
+%endif
+
+%if %{with ffmpeg}
+%files spa-module-filter-graph-ffmpeg
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/spa-0.2/filter-graph/libspa-filter-graph-plugin-ffmpeg.so
 %endif
 
 %if %{with lv2}
