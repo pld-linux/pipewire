@@ -18,15 +18,14 @@
 Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
-Version:	1.6.2
+Version:	1.6.3
 Release:	1
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	df1c9eb17a9e5f3dae1b32cc23a7cbc8
+# Source0-md5:	3d457ccac3d28b7b1f9acf2b803227ac
 Patch0:		%{name}-gcc.patch
 Patch1:		%{name}-lc3plus.patch
-Patch2:		glibc2.43.patch
 URL:		https://pipewire.org/
 BuildRequires:	ModemManager-devel >= 1.10.0
 %if %{with jack}
@@ -401,7 +400,6 @@ Wtyczka udostępniająca źródło i cel obrazu PipeWire dla GStreamera.
 %setup -q
 %patch -P0 -p1
 %patch -P1 -p1
-%patch -P2 -p1
 
 %if %{with man} && %{without apidocs}
 %{__sed} -i -e '/doxygen = / s/>=1\.9/>=1.8.10/' meson.build
