@@ -19,7 +19,7 @@ Summary:	PipeWire - server and user space API to deal with multimedia pipelines
 Summary(pl.UTF-8):	PipeWire - serwer i API przestrzeni użytkownika do obsługi potoków multimedialnych
 Name:		pipewire
 Version:	1.6.8
-Release:	1
+Release:	2
 License:	MIT, LGPL v2+, GPL v2
 Group:		Libraries
 Source0:	https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/%{name}-%{version}.tar.bz2
@@ -108,6 +108,7 @@ Requires:	systemd-units >= 1:250.1
 %{?with_ffmpeg:Suggests:	%{name}-spa-module-filter-graph-ffmpeg%{?_isa} = %{version}-%{release}}
 %{?with_lv2:Suggests:	%{name}-spa-module-filter-graph-lv2%{?_isa} = %{version}-%{release}}
 %{?with_libmysofa:Suggests:	%{name}-spa-module-filter-graph-sofa%{?_isa} = %{version}-%{release}}
+Suggests:	%{name}-spa-module-video-convert%{?_isa} = %{version}-%{release}
 Suggests:	rtkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -276,6 +277,18 @@ PipeWire SPA plugin to access cameras through libcamera.
 
 %description spa-module-libcamera -l pl.UTF-8
 Wtyczka PipeWire SPA do dostępu do kamer przez libcamera.
+
+%package spa-module-video-convert
+Summary:	PipeWire SPA plugin to convert video formats
+Summary(pl.UTF-8):	Wtyczka PipeWire SPA do konwersji formatów wideo
+Group:		Libraries
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
+
+%description spa-module-video-convert
+PipeWire SPA plugin to convert video formats.
+
+%description spa-module-video-convert -l pl.UTF-8
+Wtyczka PipeWire SPA do konwersji formatów wideo.
 
 %package spa-module-vulkan
 Summary:	PipeWire SPA plugin to generate video frames using Vulkan
@@ -586,8 +599,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/spa-0.2/v4l2
 # R: udev-libs
 %attr(755,root,root) %{_libdir}/spa-0.2/v4l2/libspa-v4l2.so
-%dir %{_libdir}/spa-0.2/videoconvert
-%attr(755,root,root) %{_libdir}/spa-0.2/videoconvert/libspa-videoconvert.so
 %dir %{_libdir}/spa-0.2/videotestsrc
 %attr(755,root,root) %{_libdir}/spa-0.2/videotestsrc/libspa-videotestsrc.so
 %dir %{_libdir}/spa-0.2/volume
@@ -832,6 +843,11 @@ rm -rf $RPM_BUILD_ROOT
 # R: libcamera
 %attr(755,root,root) %{_libdir}/spa-0.2/libcamera/libspa-libcamera.so
 %endif
+
+%files spa-module-video-convert
+%defattr(644,root,root,755)
+%dir %{_libdir}/spa-0.2/videoconvert
+%attr(755,root,root) %{_libdir}/spa-0.2/videoconvert/libspa-videoconvert.so
 
 %files spa-module-vulkan
 %defattr(644,root,root,755)
